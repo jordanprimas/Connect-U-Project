@@ -11,12 +11,38 @@ const App = () => {
   const [user, setUser] = useState(null);
 
   useEffect(() => {
+    fetchPost()
+    fetchUser()
+  }, [])
+
+  const fetchPost = () => {
     fetch('/api/posts')
-      .then(res => res.json())
-      .then(data => setPosts(data));
-  }, []);
+    .then(res => res.json())
+    .then(data => setPosts(data))
+  }
+
+  const fetchUser = () =>{
+    fetch('/api/authorized')
+    .then(res => {
+      if(res.ok){
+        res.json().then(user => setUser(user))
+      }else{
+        setUser(null)
+      }
+    })
+  }
 
   const updateUser = (user) => setUser(user)
+  const addPost = (post) => {
+    setPosts([...posts, post])
+  }
+
+  if(!user)return(
+    <>
+    <Authentication updateUser={updateUser}/>
+    </>
+  )
+  
 
   return (
     <>
@@ -24,9 +50,9 @@ const App = () => {
         <NavBar updateUser={updateUser} />
       </header>
       <Routes>
-        <Route path="/" element={<Home posts={posts} />} />
+        <Route path="/" element={<Home user={user} posts={posts} />} />
         <Route path="/posts" element={<PostList posts={posts} />} />
-        <Route path="/posts/new" element={<PostForm />} />
+        <Route path="/posts/new" element={<PostForm addPost={addPost} />} />
         <Route path="/Authentication" element={<Authentication updateUser={updateUser} />} />
       </Routes>
     </>

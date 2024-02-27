@@ -17,7 +17,7 @@ function Authentication({ updateUser }) {
 
   const handleClick = () => {
     setSignUp((signUp) => !signUp);
-  };
+  }
 
   const formSchema = yup.object().shape({
     username: yup.string().required("Please enter a username"),
@@ -29,8 +29,8 @@ function Authentication({ updateUser }) {
     email: "",
   };
 
-  const onSubmit = (values) => {
-    fetch(signUp ? "/api/users" : "/login", {
+  const handleSubmit = (values) => {
+    fetch(signUp ? "/api/users" : "/api/login", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -54,13 +54,12 @@ function Authentication({ updateUser }) {
       <Formik
         initialValues={initialValues}
         validationSchema={formSchema}
-        onSubmit={onSubmit}
+        onSubmit={handleSubmit}
       >
         <Form>
           <div>
             <label htmlFor="username">Username</label>
             <Field type="text" name="username" />
-            <ErrorMessage name="username" />
           </div>
           {signUp && (
             <div>

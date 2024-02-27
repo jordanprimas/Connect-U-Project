@@ -1,9 +1,17 @@
 import React from 'react'
+import { Link } from 'react-router-dom'
+import UserPostList from '../posts/UserPostList'
 
-const Home = ({ posts }) => {
+
+const Home = ({ user, posts }) => {
+  console.log(posts)
+  const userPosts = posts.filter(post => post.user_id === user.id)
   
   return (
-    <div>Home</div>
+    <div>
+       <Link to={`/posts/new`} >Create A New Post</Link>
+       <UserPostList postList={userPosts} />
+    </div>
   )
 }
 

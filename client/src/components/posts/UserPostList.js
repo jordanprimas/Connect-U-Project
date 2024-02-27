@@ -1,10 +1,16 @@
-import React from 'react'
-import UserPostCard from './UserPostCard'
+import React from "react"
+import UserPostCard from "./UserPostCard"
 
-const UserPostList = ({ posts }) => {
-  
+const UserPostList = ( {postList} ) => {
+    
+    const post = postList.map(post => (
+        <UserPostCard key={post.id} post={post} />
+    ))
+
   return (
-    <div>{}</div>
+    <div>
+        {post}
+    </div>
   )
 }
 

@@ -37,15 +37,16 @@ const NavBar = ({updateUser}) => {
                 >
                     All Posts
                 </NavLink>
-                <NavLink
-                    to="/posts/new"
-                    className="nav-link"
-                >
-                    Create New Post
-                </NavLink>
             </nav>
         </div> 
     )
 }
 
 export default NavBar
+
+//<NavLink
+//to="/posts/new"
+//className="nav-link"
+//>
+//Create New Post
+//</NavLink>

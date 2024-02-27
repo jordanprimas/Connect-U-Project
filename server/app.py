@@ -19,16 +19,30 @@ from models import User, Post, UserGroup, Group
 def index():
     return '<h1>Project Server</h1>'
 
-"""class Login(Resource):
+class Login(Resource):
     def post(self):
-        user = User.query.filter(
-            User.username == request.get_json()['username']
-        ).first()
+        user = User.query.filter_by(username = request.get_json()['username']).first()
 
         session['user_id'] = user.id
-        return user.to_dict()
+        response = make_response(
+            user.to_dict(),
+            200
+        )
+        return response
 
-api.add_resource(Login, '/login')"""
+api.add_resource(Login, '/api/login')
+
+class AuthorizedSession(Resource):
+    def get(self):
+        user = User.query.filter_by(id=session.get('user_id')).first()
+        if user:
+            response = make_response(
+                user.to_dict(),
+                200
+            )
+            return response
+api.add_resource(AuthorizedSession, '/api/authorized')
+            
 
 class Logout(Resource):
 
@@ -58,6 +72,13 @@ class Users(Resource):
         db.session.add(new_user)
         db.session.commit()
         session['user_id'] = new_user.id
+
+        response_dict = new_user.to_dict()
+        response = make_response(
+            response_dict,
+            201
+        )
+        return response
 api.add_resource(Users, '/api/users')
 
 class AllPosts(Resource):
@@ -71,8 +92,13 @@ class AllPosts(Resource):
 
         return response
 
+
 class UserPosts(Resource):
-    def get(self, user_id):
+    def get(self):
+        user_id = session['user_id']
+        if not user_id:
+            return {'message': '401: Not Authorized'}, 401
+            
         posts = [post.to_dict() for post in Post.query.filter_by(user_id=user_id)].all()
 
         response = make_response(
