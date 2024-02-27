@@ -8,6 +8,8 @@ from config import db
 class User(db.Model, SerializerMixin):
     __tablename__ = 'users'
 
+    serialize_rules = ('-posts','-user_groups.user',)
+
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String)
     email = db.Column(db.String)
@@ -21,7 +23,6 @@ class User(db.Model, SerializerMixin):
     groups = association_proxy('user_groups', 'group',
                                 creator=lambda group_obj: UserGroup(group = group_obj))
 
-    serialize_rules = ('-posts','-user_groups.user',)
 
     def __repr__(self):
         return f'<User {self.username}, {self.email}>'
@@ -43,6 +44,8 @@ class Post(db.Model, SerializerMixin):
 class Group(db.Model, SerializerMixin):
     __tablename__ = 'groups'
 
+    serialize_rules = ('-user_groups.group',)
+
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(80), unique=True, nullable=False)
 
@@ -52,13 +55,14 @@ class Group(db.Model, SerializerMixin):
     users = association_proxy('user_groups', 'user',
                                 creator=lambda user_obj: UserGroup(user = user_obj))
 
-    serialize_rules = ('-user_groups.group')
 
     def __repr__(self):
         return f'<Group: {self.name}>'
 
-class UserGroup(db.Model):
+class UserGroup(db.Model, SerializerMixin):
     __tablename__ = 'user_groups'
+
+    serialize_rules = ('-user.user_groups', '-group.user_groups',)
 
     id = db.Column(db.Integer, primary_key=True)
     member_count = db.Column(db.Integer, default=1)
@@ -69,7 +73,6 @@ class UserGroup(db.Model):
     user = db.relationship('User', back_populates='user_groups')
     group = db.relationship('Group', back_populates='user_groups')
 
-    serialize_rules = ('-user.user_groups', '-group.user_groups',)
 
     def __repr__(self):
         return f'<Members: {self.member_count}>'

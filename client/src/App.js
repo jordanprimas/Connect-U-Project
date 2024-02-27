@@ -5,20 +5,29 @@ import PostList from "./components/posts/PostList";
 import PostForm from "./components/posts/PostForm";
 import Home from "./components/pages/Home";
 import Authentication from "./components/pages/Authentication"
+import GroupList from "./components/groups/GroupList"
 
 const App = () => {
   const [posts, setPosts] = useState([]);
   const [user, setUser] = useState(null);
+  const [groups, setGroups] = useState([])
 
   useEffect(() => {
-    fetchPost()
+    fetchPosts()
+    fetchGroups()
     fetchUser()
   }, [])
 
-  const fetchPost = () => {
+  const fetchPosts = () => {
     fetch('/api/posts')
     .then(res => res.json())
     .then(data => setPosts(data))
+  }
+
+  const fetchGroups = () => {
+    fetch('/api/groups')
+    .then(res => res.json())
+    .then(data => setGroups(data))
   }
 
   const fetchUser = () =>{
@@ -43,7 +52,7 @@ const App = () => {
     </>
   )
   
-
+    console.log(groups)
   return (
     <>
       <header>
@@ -54,6 +63,7 @@ const App = () => {
         <Route path="/posts" element={<PostList posts={posts} />} />
         <Route path="/posts/new" element={<PostForm addPost={addPost} />} />
         <Route path="/Authentication" element={<Authentication updateUser={updateUser} />} />
+        <Route path="/groups" element={<GroupList groups={groups} />} />
       </Routes>
     </>
   );

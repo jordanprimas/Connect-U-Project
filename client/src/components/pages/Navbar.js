@@ -37,6 +37,12 @@ const NavBar = ({updateUser}) => {
                 >
                     All Posts
                 </NavLink>
+                <NavLink
+                    to="/groups"
+                    className="nav-link"
+                >
+                    All Groups 
+                </NavLink>
             </nav>
         </div> 
     )
@@ -44,9 +50,3 @@ const NavBar = ({updateUser}) => {
 
 export default NavBar
 
-//<NavLink
-//to="/posts/new"
-//className="nav-link"
-//>
-//Create New Post
-//</NavLink>

@@ -62,7 +62,7 @@ class CheckSession(Resource):
 
 api.add_resource(CheckSession, '/check_session')
 
-class Users(Resource):
+class UserResource(Resource):
     def post(self):
         data = request.get_json()
         new_user = User(
@@ -79,9 +79,9 @@ class Users(Resource):
             201
         )
         return response
-api.add_resource(Users, '/api/users')
+api.add_resource(UserResource, '/api/users')
 
-class AllPosts(Resource):
+class AllPost(Resource):
     def get(self):
         posts = [post.to_dict() for post in Post.query.all()]
         
@@ -92,28 +92,13 @@ class AllPosts(Resource):
 
         return response
 
-
-class UserPosts(Resource):
-    def get(self):
-        user_id = session['user_id']
-        if not user_id:
-            return {'message': '401: Not Authorized'}, 401
-            
-        posts = [post.to_dict() for post in Post.query.filter_by(user_id=user_id)].all()
-
-        response = make_response(
-            posts,
-            200
-        )
-
-        return response
-
     def post(self):
+        user_id = session['user_id']
         data = request.get_json()
         new_post = Post(
         title = data.get('title'),
         content = data.get('content'),
-        user_id = data.get('user_id')
+        user_id = user_id
         )
 
         db.session.add(new_post)
@@ -128,8 +113,18 @@ class UserPosts(Resource):
 
         return response
 
-api.add_resource(AllPosts, "/api/posts")
-api.add_resource(UserPosts, "/api/posts/user/<int:user_id>")
+api.add_resource(AllPost, "/api/posts")
+
+
+class GroupResource(Resource): 
+    def get(self):
+        groups = [group.to_dict() for group in Group.query.all()]
+
+        response = make_response(
+            groups,
+            200
+        )
+api.add_resource(GroupResource, "/api/groups")  
 
 
 if __name__ == '__main__':

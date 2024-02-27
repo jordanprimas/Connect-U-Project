@@ -1,6 +1,7 @@
 import React from 'react'
 
 const UserPostCard = ({ post }) => {
+  console.log(post)
 
   return (
     <div className="card" key={post.id}>
