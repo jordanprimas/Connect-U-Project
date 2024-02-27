@@ -21,7 +21,7 @@ class User(db.Model, SerializerMixin):
     groups = association_proxy('user_groups', 'group',
                                 creator=lambda group_obj: UserGroup(group = group_obj))
 
-    serialize_rules = ('-posts',)
+    serialize_rules = ('-posts','-user_groups.user',)
 
     def __repr__(self):
         return f'<User {self.username}, {self.email}>'
@@ -52,6 +52,8 @@ class Group(db.Model, SerializerMixin):
     users = association_proxy('user_groups', 'user',
                                 creator=lambda user_obj: UserGroup(user = user_obj))
 
+    serialize_rules = ('-user_groups.group')
+
     def __repr__(self):
         return f'<Group: {self.name}>'
 
@@ -66,6 +68,8 @@ class UserGroup(db.Model):
 
     user = db.relationship('User', back_populates='user_groups')
     group = db.relationship('Group', back_populates='user_groups')
+
+    serialize_rules = ('-user.user_groups', '-group.user_groups',)
 
     def __repr__(self):
         return f'<Members: {self.member_count}>'
