@@ -1,10 +1,10 @@
 import React from "react"
 import UserPostCard from "./UserPostCard"
 
-const UserPostList = ( {postList} ) => {
+const UserPostList = ( {postList, handleEditClick, handleDeleteClick} ) => {
     
     const userPostElementList = postList.map(post => (
-        <UserPostCard key={post.id} post={post} />
+        <UserPostCard key={post.id} post={post} handleEditClick={handleEditClick} handleDeleteClick={handleDeleteClick} />
     ))
 
   return (

@@ -115,6 +115,37 @@ class AllPost(Resource):
 
 api.add_resource(AllPost, "/api/posts")
 
+class PostByID(Resource):
+    def get(self, id):
+        response_dict = Post.query.filter_by(id=id).first().to_dict()
+
+        response = make_response(
+            response_dict,
+            200
+        )
+
+        return response
+
+    def patch(self, id):
+        post = Post.query.filter_by(id=id).first()
+        data = request.get_json()
+        for attr in data:
+            setattr(post, attr, data[attr])
+
+        db.session.add(post)
+        db.session.commit()
+
+        response_dict = post.to_dict()
+
+        response = make_response(
+            response_dict,
+            200
+        )
+        return response
+
+api.add_resource(PostByID, '/posts/<int:id>')
+
+
 
 class GroupResource(Resource): 
     def get(self):

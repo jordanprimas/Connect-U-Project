@@ -52,6 +52,34 @@ const App = () => {
     <Authentication updateUser={updateUser}/>
     </>
   )
+
+  const handleEditClick = (id, newPostObj) => {
+    fetch(`/posts/${id}`, {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        title: newPostObj.title,
+        content: newPostObj.content,
+      }),
+    })
+    .then((res) => res.json())
+    .then(updatedPost => {
+      const updatedPosts = posts.map(post => {
+        return post.id === id ? { ...post, ...updatedPost } : post;
+      });
+      setPosts(updatedPosts);
+    });
+  };
+  
+
+
+
+  function handleDeleteClick(){
+
+  }
+  
   
   return (
     <>
@@ -59,7 +87,7 @@ const App = () => {
         <NavBar updateUser={updateUser} />
       </header>
       <Routes>
-        <Route path="/" element={<Home user={user} posts={posts} />} />
+        <Route path="/" element={<Home user={user} posts={posts} handleDeleteClick={handleDeleteClick} handleEditClick={handleEditClick} />} />
         <Route path="/posts" element={<PostList posts={posts} />} />
         <Route path="/posts/new" element={<PostForm addPost={addPost} />} />
         <Route path="/Authentication" element={<Authentication updateUser={updateUser} />} />
