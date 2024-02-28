@@ -3,7 +3,7 @@
 # Standard library imports
 
 # Remote library imports
-from flask import request, make_response, session
+from flask import request, make_response, session, jsonify
 from flask_restful import Resource
 
 
@@ -118,12 +118,19 @@ api.add_resource(AllPost, "/api/posts")
 
 class GroupResource(Resource): 
     def get(self):
-        groups = [group.to_dict() for group in Group.query.all()]
+        groups = Group.query.all()
+        user_groups = []
 
+        for group in groups:
+            user_group = group.to_dict()
+            user_group['users'] = [user.to_dict() for user in group.users]
+            user_groups.append(user_group)
+        
         response = make_response(
-            groups,
+            jsonify(user_groups),
             200
         )
+        return response
 api.add_resource(GroupResource, "/api/groups")  
 
 

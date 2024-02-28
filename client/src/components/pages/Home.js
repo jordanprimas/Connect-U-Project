@@ -4,7 +4,7 @@ import UserPostList from '../posts/UserPostList'
 
 
 const Home = ({ user, posts }) => {
-  console.log(posts)
+
   const userPosts = posts.filter(post => post.user_id === user.id)
   
   return (

@@ -6,6 +6,7 @@ import PostForm from "./components/posts/PostForm";
 import Home from "./components/pages/Home";
 import Authentication from "./components/pages/Authentication"
 import GroupList from "./components/groups/GroupList"
+import './index.css'
 
 const App = () => {
   const [posts, setPosts] = useState([]);
@@ -52,7 +53,6 @@ const App = () => {
     </>
   )
   
-    console.log(groups)
   return (
     <>
       <header>

@@ -1,5 +1,6 @@
 import React from 'react'
 import { NavLink, useNavigate } from "react-router-dom"
+import './Navbar.css'
 
 
 
@@ -21,7 +22,7 @@ const NavBar = ({updateUser}) => {
 
     return (
         <div>
-            <button onClick={handleLogout}>
+            <button className="logout-button" onClick={handleLogout}>
                 Logout
             </button>
             <nav>

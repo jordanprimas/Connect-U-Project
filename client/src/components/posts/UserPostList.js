@@ -3,13 +3,13 @@ import UserPostCard from "./UserPostCard"
 
 const UserPostList = ( {postList} ) => {
     
-    const post = postList.map(post => (
+    const userPostElementList = postList.map(post => (
         <UserPostCard key={post.id} post={post} />
     ))
 
   return (
-    <div>
-        {post}
+    <div className="cards">
+        {userPostElementList}
     </div>
   )
 }
