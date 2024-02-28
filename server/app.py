@@ -143,7 +143,23 @@ class PostByID(Resource):
         )
         return response
 
-api.add_resource(PostByID, '/posts/<int:id>')
+    def delete(self, id):
+        post = Post.query.filter_by(id=id).first()
+        db.session.delete(post)
+        db.session.commit()
+
+        response_body = {
+            "delete_successful": True,
+            "message": "Post deleted",
+            "id": id
+        }
+        response = make_response(
+            response_body,
+            200
+        )
+        return response
+
+api.add_resource(PostByID, '/api/posts/<int:id>')
 
 
 

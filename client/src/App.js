@@ -54,7 +54,7 @@ const App = () => {
   )
 
   const handleEditClick = (id, newPostObj) => {
-    fetch(`/posts/${id}`, {
+    fetch(`/api/posts/${id}`, {
       method: "PATCH",
       headers: {
         "Content-Type": "application/json",
@@ -76,8 +76,17 @@ const App = () => {
 
 
 
-  function handleDeleteClick(){
+  const handleDeleteClick = (id) => {
+    fetch(`/api/posts/${id}`,{
+      method: "DELETE",
+    })
+    .then((res) => res.json())
+    .then((deletedPost) => onDeletePost(deletedPost))
+  }
 
+  const onDeletePost = (deletedPost) => {
+    const filteredPosts = posts.filter(post => post.id !== deletedPost.id)
+    setPosts(filteredPosts)
   }
   
   
