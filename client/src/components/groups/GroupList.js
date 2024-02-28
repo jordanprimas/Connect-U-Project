@@ -1,5 +1,5 @@
 import React from 'react';
-import GroupCard from './GroupCard';
+import GroupForm from './GroupForm';
 
 const GroupList = ({ groups }) => {
   const groupElementList = groups.map(group => (
@@ -7,8 +7,14 @@ const GroupList = ({ groups }) => {
       <h3>{group.name}</h3>
       <h4>Users:</h4>
       <ul>
-        {group.users.map(user => console.log(user.username)
-        )}
+        {group.users.map(user => (
+          user.user_groups.map(userGroup => {
+            if (userGroup.group.id === group.id) {
+              return <li key={user.id}>{user.username}</li>;
+            }
+            return null;
+          })
+        ))}
       </ul>
     </div>
   ));
@@ -16,6 +22,7 @@ const GroupList = ({ groups }) => {
   return (
     <div>
       {groupElementList}
+      <GroupForm />
     </div>
   );
 };
