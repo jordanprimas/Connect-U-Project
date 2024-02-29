@@ -3,11 +3,11 @@ import * as yup from 'yup'
 import { Formik, useFormikContext } from "formik";
 
 const ErrorMessage = ({ name }) => {
-  const { errors, touched } = useFormikContext();
+  const { errors, touched } = useFormikContext()
   return touched[name] && errors[name] ? (
     <div className="error">{errors[name]}</div>
-  ) : null;
-};
+  ) : null
+}
 
 const PostForm = ({ addPost }) => {
 
@@ -32,9 +32,9 @@ const PostForm = ({ addPost }) => {
     })
     .then(res => res.json())
     .then(data => {
-      addPost(data);
-      resetForm();
-    });
+      addPost(data)
+      resetForm()
+    })
   }
 
   return (

@@ -5,7 +5,7 @@ import './Navbar.css'
 
 
 const NavBar = ({updateUser}) => {
-    const navigate = useNavigate();
+    const navigate = useNavigate()
 
 
     const handleLogout = () => {

@@ -3,28 +3,28 @@ import * as yup from 'yup';
 import { Formik, useFormikContext } from 'formik';
 
 const ErrorMessage = ({ name }) => {
-  const { errors, touched } = useFormikContext();
+  const { errors, touched } = useFormikContext()
   return touched[name] && errors[name] ? (
     <div className="error">{errors[name]}</div>
-  ) : null;
-};
+  ) : null
+}
 
 const UserPostCard = ({ post, handleEditClick, handleDeleteClick }) => {
-  const [editIsClicked, setEditIsClicked] = useState(false);
+  const [editIsClicked, setEditIsClicked] = useState(false)
   const initialValues = {
     title: post.title,
     content: post.content,
-  };
+  }
 
   const formSchema = yup.object().shape({
     title: yup.string().min(1).required('Please enter at least 1 character'),
     content: yup.string().min(10).required('Please enter at least 10 characters'),
-  });
+  })
 
   const handleSubmit = (values) => {
-    handleEditClick(post.id, values); // Pass the updated values to handleEditClick
-    setEditIsClicked(false);
-  };
+    handleEditClick(post.id, values)
+    setEditIsClicked(false)
+  }
 
   return (
     <div className="card" key={post.id}>
@@ -81,7 +81,7 @@ const UserPostCard = ({ post, handleEditClick, handleDeleteClick }) => {
         </div>
       )}
     </div>
-  );
-};
+  )
+}
 
 export default UserPostCard;

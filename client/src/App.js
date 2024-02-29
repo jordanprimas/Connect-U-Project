@@ -11,11 +11,11 @@ import './index.css'
 const App = () => {
   const [posts, setPosts] = useState([]);
   const [user, setUser] = useState(null);
-  const [groups, setGroups] = useState([])
+  const [userGroups, setUserGroups] = useState([])
 
   useEffect(() => {
     fetchPosts()
-    fetchGroups()
+    fetchUserGroups()
     fetchUser()
   }, [])
 
@@ -25,10 +25,10 @@ const App = () => {
     .then(data => setPosts(data))
   }
 
-  const fetchGroups = () => {
-    fetch('/api/groups')
+  const fetchUserGroups = () => {
+    fetch('/api/user_groups')
     .then(res => res.json())
-    .then(data => setGroups(data))
+    .then(data => setUserGroups(data))
   }
 
   const fetchUser = () =>{
@@ -47,11 +47,18 @@ const App = () => {
     setPosts([...posts, post])
   }
 
-  if(!user)return(
-    <>
-    <Authentication updateUser={updateUser}/>
-    </>
-  )
+
+  const updateUserGroup = (updatedUserGroup, groupId) => {
+    const updatedUserGroups = userGroups.map(userGroup => {
+      if (userGroup.group.id === groupId) {
+        return { ...userGroup, members: updatedUserGroup.members }
+      } else {
+        return userGroup
+      }
+  })
+      setUserGroups(updatedUserGroups)
+    console.log(updatedUserGroup)
+  }
 
   const handleEditClick = (id, newPostObj) => {
     fetch(`/api/posts/${id}`, {
@@ -67,11 +74,17 @@ const App = () => {
     .then((res) => res.json())
     .then(updatedPost => {
       const updatedPosts = posts.map(post => {
-        return post.id === id ? { ...post, ...updatedPost } : post;
-      });
-      setPosts(updatedPosts);
-    });
-  };
+        return post.id === id ? { ...post, ...updatedPost } : post
+      })
+      setPosts(updatedPosts)
+    })
+  }
+
+  if(!user)return(
+    <>
+    <Authentication updateUser={updateUser}/>
+    </>
+  )
   
 
 
@@ -100,7 +113,7 @@ const App = () => {
         <Route path="/posts" element={<PostList posts={posts} />} />
         <Route path="/posts/new" element={<PostForm addPost={addPost} />} />
         <Route path="/Authentication" element={<Authentication updateUser={updateUser} />} />
-        <Route path="/groups" element={<GroupList groups={groups} />} />
+        <Route path="/groups" element={<GroupList userGroups={userGroups} updateUserGroup={updateUserGroup} />} />
       </Routes>
     </>
   );

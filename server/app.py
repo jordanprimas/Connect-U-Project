@@ -66,8 +66,8 @@ class UserResource(Resource):
     def post(self):
         data = request.get_json()
         new_user = User(
-            username=data['username'],
-            email=data['email']
+            username=data.get('username'),
+            email=data.get('email')
         )
         db.session.add(new_user)
         db.session.commit()
@@ -161,24 +161,89 @@ class PostByID(Resource):
 
 api.add_resource(PostByID, '/api/posts/<int:id>')
 
-
-
 class GroupResource(Resource): 
     def get(self):
         groups = Group.query.all()
         user_groups = []
 
         for group in groups:
-            user_group = group.to_dict()
-            user_group['users'] = [user.to_dict() for user in group.users]
-            user_groups.append(user_group)
+            group_dict = group.to_dict()
+            users = [user.to_dict() for user in group.users]
+            group_dict["users"] = users
+            user_groups.append(group_dict)
         
         response = make_response(
             jsonify(user_groups),
             200
         )
         return response
+
 api.add_resource(GroupResource, "/api/groups")  
+
+
+class UserGroupResource(Resource):
+    def get(self):
+        user_groups = [user_group.to_dict() for user_group in UserGroup.query.all()]
+        
+        response = make_response(
+            user_groups, 
+            200
+        )
+
+        return response
+
+    def post(self):
+        user_id = session['user_id']
+
+        data = request.get_json()
+        group_id = data.get("group_id")
+
+        # Check if the user is already a member of the group
+        existing_user_group = UserGroup.query.filter_by(user_id=user_id, group_id=group_id).first()
+        if existing_user_group:
+            response_body = {
+                "error": "User already in this group",
+            }
+            response = make_response(
+                response_body,
+                400
+            )
+            return response
+
+        new_user_group = UserGroup(
+            message=data.get("message"),
+            user_id=user_id,
+            group_id=group_id
+        )
+
+        db.session.add(new_user_group)
+        db.session.commit()
+
+        user_group_dict = new_user_group.to_dict()
+
+        response = make_response(
+            user_group_dict,
+            201
+        )
+
+        return response
+
+api.add_resource(UserGroupResource, "/api/user_groups")
+
+
+class UserGroupById(Resource):
+     def get(self, groupId):
+        user_groups = UserGroup.query.filter_by(group_id=groupId).all()
+        user_group_dicts = [user_group.to_dict() for user_group in user_groups]
+        
+        response = make_response(
+            user_group_dicts,
+            200
+        )
+
+        return response
+
+api.add_resource(UserGroupById, '/api/groups/<int:groupId>/users')
 
 
 if __name__ == '__main__':

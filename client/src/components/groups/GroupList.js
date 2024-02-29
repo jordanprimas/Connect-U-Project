@@ -1,28 +1,32 @@
-import React from 'react';
 import GroupForm from './GroupForm';
 
-const GroupList = ({ groups }) => {
-  const groupElementList = groups.map(group => (
-    <div key={group.id}>
-      <h3>{group.name}</h3>
-      <h4>Users:</h4>
+const GroupList = ({ userGroups, updateUserGroup }) => {
+
+  const userGroupList = userGroups.map(userGroup => (
+    <div key={userGroup.id}>
+      <h2>{userGroup.group.name}</h2>
+      <GroupForm
+        className="join-group-button"
+        updateUserGroup={updateUserGroup}
+        groupId={userGroup.group.id}
+      />
+      <h4>Members:</h4>
       <ul>
-        {group.users.map(user => (
-          user.user_groups.map(userGroup => {
-            if (userGroup.group.id === group.id) {
-              return <li key={user.id}>{user.username}</li>;
-            }
-            return null;
-          })
-        ))}
+        {userGroup.user ? (
+          <div key={userGroup.user.id}>
+            <li>{userGroup.user.username}</li>
+            <p>{userGroup.message}</p>
+          </div>
+        ) : (
+          <div>No members yet</div>
+        )}
       </ul>
     </div>
   ));
 
   return (
     <div>
-      {groupElementList}
-      <GroupForm />
+      {userGroupList}
     </div>
   );
 };

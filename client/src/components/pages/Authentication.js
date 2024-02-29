@@ -3,31 +3,30 @@ import { useNavigate } from "react-router-dom";
 import { Formik, Form, Field, useFormikContext } from "formik";
 import * as yup from "yup";
 
-// Custom ErrorMessage component
 const ErrorMessage = ({ name }) => {
-  const { errors, touched } = useFormikContext();
+  const { errors, touched } = useFormikContext()
   return touched[name] && errors[name] ? (
     <div className="error">{errors[name]}</div>
-  ) : null;
-};
+  ) : null
+}
 
 function Authentication({ updateUser }) {
-  const [signUp, setSignUp] = useState(false);
-  const navigate = useNavigate();
+  const [signUp, setSignUp] = useState(false)
+  const navigate = useNavigate()
 
   const handleClick = () => {
-    setSignUp((signUp) => !signUp);
+    setSignUp((signUp) => !signUp)
   }
 
   const formSchema = yup.object().shape({
     username: yup.string().required("Please enter a username"),
     email: yup.string().email(),
-  });
+  })
 
   const initialValues = {
     username: "",
     email: "",
-  };
+  }
 
   const handleSubmit = (values) => {
     fetch(signUp ? "/api/users" : "/api/login", {
@@ -39,10 +38,10 @@ function Authentication({ updateUser }) {
     })
       .then((res) => res.json())
       .then((user) => {
-        updateUser(user);
-        navigate("/");
-      });
-  };
+        updateUser(user)
+        navigate("/")
+      })
+  }
 
   return (
     <div>
@@ -72,7 +71,7 @@ function Authentication({ updateUser }) {
         </Form>
       </Formik>
     </div>
-  );
+  )
 }
 
 export default Authentication;

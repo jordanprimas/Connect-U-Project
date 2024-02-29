@@ -17,11 +17,13 @@ if __name__ == '__main__':
         
         User.query.delete()
         Post.query.delete()
+        Group.query.delete()
+        UserGroup.query.delete()
 
-        u1 = User(username = "username one", email = "email", password = "12345")
-        u2 = User(username = "username two", email = "email two", password = "23456")
-        u3 = User(username = "username three", email = "email three", password = "password")
-        u4 = User(username = "username four", email = "email four", password = "hello world")
+        u1 = User(username = "jordan1234", email = "email", password = "12345")
+        u2 = User(username = "cashew1234", email = "email two", password = "23456")
+        u3 = User(username = "arya1234", email = "email three", password = "password")
+        u4 = User(username = "username", email = "email four", password = "hello world")
 
         db.session.add_all([u1, u2, u3, u4])
         db.session.commit()
@@ -41,9 +43,9 @@ if __name__ == '__main__':
         db.session.add_all([g1, g2, g3])
         db.session.commit()
 
-        ug1 = UserGroup(user=u1, group=g1)
-        ug2 = UserGroup(user=u2, group=g3)
-        ug3 = UserGroup(user=u4, group=g2)
+        ug1 = UserGroup(user=u1, group=g1, message="I'm so excited to be joining the group")
+        ug2 = UserGroup(user=u2, group=g3, message="Hello everyone!")
+        ug3 = UserGroup(user=u4, group=g2, message="I just joined!!")
 
         db.session.add_all([ug1, ug2, ug3])
         db.session.commit()

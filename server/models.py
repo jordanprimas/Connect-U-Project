@@ -65,7 +65,7 @@ class UserGroup(db.Model, SerializerMixin):
     serialize_rules = ('-user.user_groups', '-group.user_groups',)
 
     id = db.Column(db.Integer, primary_key=True)
-    member_count = db.Column(db.Integer, default=1)
+    message = db.Column(db.String(80), nullable=True)
 
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
     group_id = db.Column(db.Integer, db.ForeignKey('groups.id'))
