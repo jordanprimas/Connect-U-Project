@@ -164,19 +164,20 @@ api.add_resource(PostByID, '/api/posts/<int:id>')
 class GroupResource(Resource): 
     def get(self):
         groups = Group.query.all()
-        user_groups = []
+        # user_groups = []
 
-        for group in groups:
-            group_dict = group.to_dict()
-            users = [user.to_dict() for user in group.users]
-            group_dict["users"] = users
-            user_groups.append(group_dict)
+        # for group in groups:
+        #     group_dict = group.to_dict()
+        #     users = [user.to_dict() for user in group.users]
+        #     group_dict["users"] = users
+        #     user_groups.append(group_dict)
         
-        response = make_response(
-            jsonify(user_groups),
-            200
-        )
-        return response
+        # response = make_response(
+        #     jsonify(user_groups),
+        #     200
+        # )
+        # return response
+        return [group.to_dict() for group in groups], 200
 
 api.add_resource(GroupResource, "/api/groups")  
 

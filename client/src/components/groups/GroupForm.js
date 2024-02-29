@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-const GroupForm = ({ groupId, updateUserGroup }) => {
+const GroupForm = ({ groupId, updateGroup }) => {
   const [message, setMessage] = useState("");
 
   const handleClick = () => {
@@ -21,15 +21,19 @@ const GroupForm = ({ groupId, updateUserGroup }) => {
         throw new Error("Failed to join group");
       }
     })
-    .then((updatedUserGroup) => {
-      updateUserGroup(updatedUserGroup, groupId);
+    .then((updatedGroup) => {
+      updateGroup(updatedGroup, groupId);
+      return fetch('/api/groups'); // Return the fetch promise
+    })
+    .then((res) => res.json())
+    .then((newGroups) => {
+      updateGroup(newGroups);
     })
     .catch((error) => {
       console.error("Failed to join group:", error);
     });
   };
 
-  
   return (
     <div>
       <button onClick={handleClick}>Join Group</button>

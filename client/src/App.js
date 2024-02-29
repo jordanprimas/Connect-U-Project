@@ -11,11 +11,11 @@ import './index.css'
 const App = () => {
   const [posts, setPosts] = useState([]);
   const [user, setUser] = useState(null);
-  const [userGroups, setUserGroups] = useState([])
+  const [groups, setGroups] = useState([])
 
   useEffect(() => {
     fetchPosts()
-    fetchUserGroups()
+    fetchGroups()
     fetchUser()
   }, [])
 
@@ -25,10 +25,10 @@ const App = () => {
     .then(data => setPosts(data))
   }
 
-  const fetchUserGroups = () => {
-    fetch('/api/user_groups')
+  const fetchGroups = () => {
+    fetch('/api/groups')
     .then(res => res.json())
-    .then(data => setUserGroups(data))
+    .then(data => setGroups(data))
   }
 
   const fetchUser = () =>{
@@ -48,17 +48,8 @@ const App = () => {
   }
 
 
-  const updateUserGroup = (updatedUserGroup, groupId) => {
-    const updatedUserGroups = userGroups.map(userGroup => {
-      if (userGroup.group.id === groupId) {
-        return { ...userGroup, members: updatedUserGroup.members }
-      } else {
-        return userGroup
-      }
-  })
-      setUserGroups(updatedUserGroups)
-    console.log(updatedUserGroup)
-  }
+  const updateGroup = (updatedGroups) => setGroups(updatedGroups)
+  
 
   const handleEditClick = (id, newPostObj) => {
     fetch(`/api/posts/${id}`, {
@@ -113,7 +104,7 @@ const App = () => {
         <Route path="/posts" element={<PostList posts={posts} />} />
         <Route path="/posts/new" element={<PostForm addPost={addPost} />} />
         <Route path="/Authentication" element={<Authentication updateUser={updateUser} />} />
-        <Route path="/groups" element={<GroupList userGroups={userGroups} updateUserGroup={updateUserGroup} />} />
+        <Route path="/groups" element={<GroupList groups={groups} updateGroup={updateGroup} />} />
       </Routes>
     </>
   );
