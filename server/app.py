@@ -232,19 +232,6 @@ class UserGroupResource(Resource):
 api.add_resource(UserGroupResource, "/api/user_groups")
 
 
-class UserGroupById(Resource):
-     def get(self, groupId):
-        user_groups = UserGroup.query.filter_by(group_id=groupId).all()
-        user_group_dicts = [user_group.to_dict() for user_group in user_groups]
-        
-        response = make_response(
-            user_group_dicts,
-            200
-        )
-
-        return response
-
-api.add_resource(UserGroupById, '/api/groups/<int:groupId>/users')
 
 
 if __name__ == '__main__':
