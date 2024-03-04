@@ -62,9 +62,23 @@ class CheckSession(Resource):
 
 api.add_resource(CheckSession, '/check_session')
 
+
 class UserResource(Resource):
+    def get(self):
+        users = [user.to_dict() for user in User.query.all()]
+        if not users:
+            abort(404, "No users were found!")
+
+        response = make_response(
+            users,
+            200
+        )
+
+        return response
+
     def post(self):
         data = request.get_json()
+
         new_user = User(
             username=data.get('username'),
             email=data.get('email')
@@ -84,6 +98,9 @@ api.add_resource(UserResource, '/api/users')
 class AllPost(Resource):
     def get(self):
         posts = [post.to_dict() for post in Post.query.all()]
+
+        if not posts:
+            abort(404, "No posts were found!")
         
         response = make_response(
             posts, 
@@ -95,6 +112,7 @@ class AllPost(Resource):
     def post(self):
         user_id = session['user_id']
         data = request.get_json()
+
         new_post = Post(
         title = data.get('title'),
         content = data.get('content'),
@@ -117,10 +135,13 @@ api.add_resource(AllPost, "/api/posts")
 
 class PostByID(Resource):
     def get(self, id):
-        response_dict = Post.query.filter_by(id=id).first().to_dict()
+        post = Post.query.filter_by(id=id).first().to_dict()
+        if not post:
+            abort(404, "The post you are looking for could not be found!")
+
 
         response = make_response(
-            response_dict,
+            post,
             200
         )
 
@@ -128,6 +149,9 @@ class PostByID(Resource):
 
     def patch(self, id):
         post = Post.query.filter_by(id=id).first()
+        if not post:
+            abort(404, "The post you are trying to update for could not be found!")
+
         data = request.get_json()
         for attr in data:
             setattr(post, attr, data[attr])
@@ -145,6 +169,9 @@ class PostByID(Resource):
 
     def delete(self, id):
         post = Post.query.filter_by(id=id).first()
+        if not post:
+            abort(404, "The post you are trying to delete can't be found!")
+
         db.session.delete(post)
         db.session.commit()
 
@@ -163,21 +190,37 @@ api.add_resource(PostByID, '/api/posts/<int:id>')
 
 class GroupResource(Resource): 
     def get(self):
-        groups = Group.query.all()
-        # user_groups = []
+        groups = [group.to_dict() for group in Group.query.all()]
+        if not groups:
+            abort(404, "No groups were found!")
 
-        # for group in groups:
-        #     group_dict = group.to_dict()
-        #     users = [user.to_dict() for user in group.users]
-        #     group_dict["users"] = users
-        #     user_groups.append(group_dict)
+        response = make_response(
+            groups,
+            200
+        )
+
+        return response
+    
+    def post(self):
+        data = request.get_json()
+
+        new_group = Group(
+            name=data.get("name"),
+        )
+
+
+        db.session.add(new_group)
+        db.session.commit()
+
+        new_group_dict = new_group.to_dict()
+
+        response = make_response(
+            new_group_dict,
+            201
+        )
+        return response
+
         
-        # response = make_response(
-        #     jsonify(user_groups),
-        #     200
-        # )
-        # return response
-        return [group.to_dict() for group in groups], 200
 
 api.add_resource(GroupResource, "/api/groups")  
 
@@ -185,6 +228,9 @@ api.add_resource(GroupResource, "/api/groups")
 class UserGroupResource(Resource):
     def get(self):
         user_groups = [user_group.to_dict() for user_group in UserGroup.query.all()]
+
+        if not user_groups:
+            abort(404, "No user groups were found!")
         
         response = make_response(
             user_groups, 

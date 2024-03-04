@@ -28,10 +28,10 @@ if __name__ == '__main__':
         db.session.add_all([u1, u2, u3, u4])
         db.session.commit()
 
-        p1 = Post(title = "title one", content = "This is my first post and I would like to say that...", user_id = u1.id)
-        p2 = Post(title = "title two", content = "This is my first post and I would like to say that...", user_id = u2.id)
-        p3 = Post(title = "title three", content = "This is my first post and I would like to say that...", user_id = u3.id)
-        p4 = Post(title = "title four", content = "This is my first post and I would like to say that...", user_id = u4.id)
+        p1 = Post(title = "title one", content = "This is my first post...", user_id = u1.id)
+        p2 = Post(title = "title two", content = "This is my first post...", user_id = u2.id)
+        p3 = Post(title = "title three", content = "This is my first post...", user_id = u3.id)
+        p4 = Post(title = "title four", content = "This is my first post...", user_id = u4.id)
 
         db.session.add_all([p1, p2, p3, p4])
         db.session.commit()
@@ -46,6 +46,7 @@ if __name__ == '__main__':
         ug1 = UserGroup(user=u1, group=g1, message="I'm so excited to be joining the group")
         ug2 = UserGroup(user=u2, group=g3, message="Hello everyone!")
         ug3 = UserGroup(user=u4, group=g2, message="I just joined!!")
+        ug4 = UserGroup(user=u4, group=g1, message="Hi everyone!")
 
         db.session.add_all([ug1, ug2, ug3])
         db.session.commit()
