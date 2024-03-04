@@ -2,6 +2,7 @@ from sqlalchemy_serializer import SerializerMixin
 from sqlalchemy.ext.associationproxy import association_proxy
 from datetime import datetime
 
+
 from config import db
 
 # Models go here!
@@ -11,8 +12,8 @@ class User(db.Model, SerializerMixin):
     serialize_rules = ('-posts','-user_groups.user',)
 
     id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String)
-    email = db.Column(db.String)
+    username = db.Column(db.String, nullable=False)
+    email = db.Column(db.String, nullable=False)
     password = db.Column(db.String)
 
     #Relationship mapping user to related instance attributes
@@ -47,7 +48,7 @@ class Group(db.Model, SerializerMixin):
     serialize_rules = ('-user_groups.group',)
 
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(80), unique=True, nullable=False)
+    name = db.Column(db.String, nullable=False)
 
     user_groups = db.relationship('UserGroup', back_populates='group', cascade='all, delete-orphan')
 
@@ -65,7 +66,7 @@ class UserGroup(db.Model, SerializerMixin):
     serialize_rules = ('-user.user_groups', '-group.user_groups',)
 
     id = db.Column(db.Integer, primary_key=True)
-    message = db.Column(db.String(80), nullable=True)
+    message = db.Column(db.String, nullable=True)
 
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
     group_id = db.Column(db.Integer, db.ForeignKey('groups.id'))

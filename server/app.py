@@ -15,10 +15,6 @@ from models import User, Post, UserGroup, Group
 
 # Views go here!
 
-@app.route('/')
-def index():
-    return '<h1>Project Server</h1>'
-
 class Login(Resource):
     def post(self):
         user = User.query.filter_by(username = request.get_json()['username']).first()
@@ -139,7 +135,6 @@ class PostByID(Resource):
         if not post:
             abort(404, "The post you are looking for could not be found!")
 
-
         response = make_response(
             post,
             200
@@ -219,8 +214,6 @@ class GroupResource(Resource):
             201
         )
         return response
-
-        
 
 api.add_resource(GroupResource, "/api/groups")  
 

@@ -1,14 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Formik, Form, Field, useFormikContext } from "formik";
+import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as yup from "yup";
-
-const ErrorMessage = ({ name }) => {
-  const { errors, touched } = useFormikContext()
-  return touched[name] && errors[name] ? (
-    <div className="error">{errors[name]}</div>
-  ) : null
-}
 
 function Authentication({ updateUser }) {
   const [signUp, setSignUp] = useState(false)
@@ -20,15 +13,10 @@ function Authentication({ updateUser }) {
 
   const formSchema = yup.object().shape({
     username: yup.string().required("Please enter a username"),
-    email: yup.string().email(),
+    email: signUp ? yup.string().email("Invalid email address") : yup.string(),
   })
 
-  const initialValues = {
-    username: "",
-    email: "",
-  }
-
-  const handleSubmit = (values) => {
+  const onSubmit = (values) => {
     fetch(signUp ? "/api/users" : "/api/login", {
       method: "POST",
       headers: {
@@ -41,36 +29,54 @@ function Authentication({ updateUser }) {
         updateUser(user)
         navigate("/")
       })
+      .catch((error) => {
+        console.error("Error:", error);
+      })
   }
 
   return (
+    <Formik
+      initialValues={{
+        username: "",
+        email: "",
+      }}
+      validationSchema={formSchema}
+      onSubmit={onSubmit}
+    >
     <div>
       <h2>Please log in or sign up</h2>
-      <h2>{signUp ? "Already a member?" : "Not a member?"}</h2>
-      <button onClick={handleClick}>
-        {signUp ? "Log In!" : "Register now!"}
-      </button>
-      <Formik
-        initialValues={initialValues}
-        validationSchema={formSchema}
-        onSubmit={handleSubmit}
-      >
+        <h2>{signUp ? "Already a member?" : "Not a member?"}</h2>
+        
+        <button type="button" onClick={handleClick}>
+          {signUp ? "Log In!" : "Register now!"}
+        </button>
         <Form>
           <div>
-            <label htmlFor="username">Username</label>
-            <Field type="text" name="username" />
+            <Field
+              type="text"
+              name="username"
+              placeholder="username"
+            />
+            <ErrorMessage name="username" component="div" style={{ color: "red" }} />
           </div>
+          
           {signUp && (
             <div>
-              <label htmlFor="email">Email</label>
-              <Field type="text" name="email" />
-              <ErrorMessage name="email" />
+              <Field
+                type="email"
+                name="email"
+                placeholder="email"
+              />
+              <ErrorMessage name="email" component="div" style={{ color: "red" }} />
             </div>
           )}
-          <button type="submit">{signUp ? "Sign up" : "Log in"}</button>
+          
+          <button type="submit">
+            {signUp ? "Sign up" : "Log in"}
+          </button>
         </Form>
-      </Formik>
-    </div>
+      </div>
+    </Formik>
   )
 }
 
