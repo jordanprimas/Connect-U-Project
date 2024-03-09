@@ -25,17 +25,7 @@ const GroupForm = ({ groupId, updateGroup }) => {
           throw new Error("Failed to join group");
         }
       })
-      .then((updatedGroup) => {
-        updateGroup(updatedGroup, groupId);
-        return fetch('/api/groups')
-      })
-      .then((res) => res.json())
-      .then((newGroups) => {
-        updateGroup(newGroups);
-      })
-      .catch((error) => {
-        setErrorMessage("User is already a member of this group.")
-      });
+      .then(data => updateGroup(data))
     }
   };
 

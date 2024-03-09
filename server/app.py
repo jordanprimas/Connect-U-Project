@@ -3,7 +3,7 @@
 # Standard library imports
 
 # Remote library imports
-from flask import request, make_response, session, jsonify
+from flask import request, make_response, session, jsonify, abort
 from flask_restful import Resource
 
 
@@ -15,16 +15,20 @@ from models import User, Post, UserGroup, Group
 
 # Views go here!
 
+
 class Login(Resource):
     def post(self):
         user = User.query.filter_by(username = request.get_json()['username']).first()
 
-        session['user_id'] = user.id
-        response = make_response(
-            user.to_dict(),
-            200
-        )
-        return response
+        if user:
+            session['user_id'] = user.id
+            response = make_response(
+                user.to_dict(),
+                200
+            )
+            return response
+        else:
+            return {'error': 'Invalid username'}, 401
 
 api.add_resource(Login, '/api/login')
 
@@ -37,6 +41,8 @@ class AuthorizedSession(Resource):
                 200
             )
             return response
+        else:
+            abort(401, "Not Authorized")
 api.add_resource(AuthorizedSession, '/api/authorized')
             
 
@@ -47,17 +53,6 @@ class Logout(Resource):
         return {'message': '204: No Content'}, 204
 
 api.add_resource(Logout, '/api/logout')
-
-class CheckSession(Resource):
-     def get(self):
-        user = User.query.filter(User.id == session.get('user_id')).first()
-        if user:
-            return user.to_dict()
-        else:
-            return {'message': '401: Not Authorized'}, 401
-
-api.add_resource(CheckSession, '/check_session')
-
 
 class UserResource(Resource):
     def get(self):
@@ -270,7 +265,22 @@ class UserGroupResource(Resource):
 
 api.add_resource(UserGroupResource, "/api/user_groups")
 
+class UserPost(Resource):
+    def get(self, n):
+        users = [user.to_dict() for user in User.query.all() if len(user.posts) >= n]
 
+        response = make_response(
+            users,
+            200
+        )
+        return response
+
+
+        
+
+
+
+api.add_resource(UserPost, '/user_posts/<int:n>')     
 
 
 if __name__ == '__main__':

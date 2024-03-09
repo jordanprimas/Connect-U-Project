@@ -48,7 +48,26 @@ const App = () => {
   }
 
 
-  const updateGroup = (updatedGroups) => setGroups(updatedGroups)
+  const updateGroup = (updatedUserGroup) => {
+    const group = groups.find(group => group.id === updatedUserGroup.group.id)
+    console.log(updatedUserGroup)
+    const updatedUserGroups = [...group.user_groups, updatedUserGroup]
+    console.log(updatedUserGroups)
+    const updatedGroup = {
+      ...group,
+      user_groups: updatedUserGroups
+    }
+    console.log(updatedGroup)
+
+    const updatedGroups = groups.map(group => {
+      if (group.id === updatedGroup.id) {
+        return updatedGroup
+      } else {
+        return group
+      }
+    })
+    setGroups(updatedGroups)
+  }
   
 
   const handleEditClick = (id, newPostObj) => {
