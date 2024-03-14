@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext } from "react";
 import { Routes, Route } from 'react-router-dom';
 import NavBar from "./components/pages/Navbar";
 import PostList from "./components/posts/PostList";
@@ -7,40 +7,15 @@ import Home from "./components/pages/Home";
 import Authentication from "./components/pages/Authentication"
 import GroupList from "./components/groups/GroupList"
 import './index.css'
+import { GroupContext } from "./contexts/GroupContext";
+import { PostContext } from "./contexts/PostContext"
+import { UserContext } from "./contexts/UserContext";
 
 const App = () => {
-  const [posts, setPosts] = useState([]);
-  const [user, setUser] = useState(null);
-  const [groups, setGroups] = useState([])
-
-  useEffect(() => {
-    fetchPosts()
-    fetchGroups()
-    fetchUser()
-  }, [])
-
-  const fetchPosts = () => {
-    fetch('/api/posts')
-    .then(res => res.json())
-    .then(data => setPosts(data))
-  }
-
-  const fetchGroups = () => {
-    fetch('/api/groups')
-    .then(res => res.json())
-    .then(data => setGroups(data))
-  }
-
-  const fetchUser = () =>{
-    fetch('/api/authorized')
-    .then(res => {
-      if(res.ok){
-        res.json().then(user => setUser(user))
-      }else{
-        setUser(null)
-      }
-    })
-  }
+  const [user, setUser] = useContext(UserContext)
+  const [posts, setPosts] = useContext(PostContext)
+  const [groups, setGroups] = useContext(GroupContext)
+  
 
   const updateUser = (user) => setUser(user)
   const addPost = (post) => {
@@ -90,15 +65,6 @@ const App = () => {
     })
   }
 
-  if(!user)return(
-    <>
-    <Authentication updateUser={updateUser}/>
-    </>
-  )
-  
-
-
-
   const handleDeleteClick = (id) => {
     fetch(`/api/posts/${id}`,{
       method: "DELETE",
@@ -112,6 +78,12 @@ const App = () => {
     setPosts(filteredPosts)
   }
   
+
+  if(!user)return(
+    <>
+    <Authentication updateUser={updateUser}/>
+    </>
+  )
   
   return (
     <>

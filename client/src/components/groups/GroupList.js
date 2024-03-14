@@ -1,11 +1,6 @@
-import React from 'react';
 import GroupForm from './GroupForm';
 
-const GroupList = ({ groups, updateGroup, isLoading }) => {
-
-  if (isLoading) {
-    return <div>Loading...</div>;
-  }
+const GroupList = ({ groups, updateGroup }) => {
 
   const userGroupList = Array.isArray(groups) ? (
     groups.map(group => (

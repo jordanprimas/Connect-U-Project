@@ -1,35 +1,50 @@
 from sqlalchemy_serializer import SerializerMixin
 from sqlalchemy.ext.associationproxy import association_proxy
+from sqlalchemy.ext.hybrid import hybrid_property
 from datetime import datetime
 
 
-from config import db
+from config import db, bcrypt, generate_password_hash, check_password_hash
 
 # Models go here!
+
 class User(db.Model, SerializerMixin):
     __tablename__ = 'users'
 
-    serialize_rules = ('-posts','-user_groups.user',)
+    serialize_rules = ('-posts.user', '-user_groups.user', '-password_hash', '-likes.user',)
 
     id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String, nullable=False)
+    username = db.Column(db.String, nullable=False, unique=True)
     email = db.Column(db.String, nullable=False)
-    password = db.Column(db.String)
+    _password_hash = db.Column(db.String)
 
-    #Relationship mapping user to related instance attributes
     posts = db.relationship('Post', back_populates='user', cascade='all, delete-orphan', foreign_keys='Post.user_id')
     user_groups = db.relationship('UserGroup', back_populates='user', cascade='all, delete-orphan')
+    likes = db.relationship('Like', back_populates='user', cascade='all, delete-orphan')
 
-    #Association proxy to get all groups for this user through user_groups
-    groups = association_proxy('user_groups', 'group',
-                                creator=lambda group_obj: UserGroup(group = group_obj))
+    @hybrid_property
+    def password_hash(self):
+        return self._password_hash
 
+    #Creating a setter method called password_hash that takes self and a password
+    #Use bcrypt to generate the password hash
+    #Set the _password_hash to the hashed password
+    @password_hash.setter
+    def password_hash(self, password):
+        password_hash = generate_password_hash(password.encode('utf-8'))
+        self._password_hash = password_hash.decode('utf-8')
+
+    def authenticate(self, password):
+        return check_password_hash(self._password_hash, password.encode('utf-8'))
 
     def __repr__(self):
         return f'<User {self.username}, {self.email}>'
 
+
 class Post(db.Model, SerializerMixin):
     __tablename__ = 'posts'
+
+    serialize_rules = ( '-users.post', '-likes.post',)
 
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String)
@@ -38,6 +53,7 @@ class Post(db.Model, SerializerMixin):
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
 
     user = db.relationship('User', back_populates='posts')
+    likes = db.relationship('Like', back_populates='post', cascade='all, delete-orphan')
 
     def __repr__(self):
         return f'<Post {self.title}>'
@@ -48,7 +64,7 @@ class Group(db.Model, SerializerMixin):
     serialize_rules = ('-user_groups.group',)
 
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String, nullable=False)
+    name = db.Column(db.String, nullable=False, unique=True)
 
     user_groups = db.relationship('UserGroup', back_populates='group', cascade='all, delete-orphan')
 
@@ -76,7 +92,25 @@ class UserGroup(db.Model, SerializerMixin):
 
 
     def __repr__(self):
-        return f'<Members: {self.member_count}>'
+        return f'<User: {self.user} Group:{self.group}>'
+
+class Like(db.Model, SerializerMixin):
+    __tablename__ = 'likes'
+
+    serialize_rules = ('-user', '-post',)
+
+    id = db.Column(db.Integer, primary_key=True)
+
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+    post_id = db.Column(db.Integer, db.ForeignKey('posts.id'))
+
+    user = db.relationship('User', back_populates='likes')
+    post = db.relationship('Post', back_populates='likes')
+
+    def __repr__(self):
+        return f'<User: {self.user} Post: {self.post}'
+
+
 
 
 
