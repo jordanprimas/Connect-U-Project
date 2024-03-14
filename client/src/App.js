@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React, { useContext, useState, useEffect } from "react";
 import { Routes, Route } from 'react-router-dom';
 import NavBar from "./components/pages/Navbar";
 import PostList from "./components/posts/PostList";
@@ -15,9 +15,17 @@ const App = () => {
   const [user, setUser] = useContext(UserContext)
   const [posts, setPosts] = useContext(PostContext)
   const [groups, setGroups] = useContext(GroupContext)
+  const [likes, setLikes] = useState([])
   
+  useEffect(() => {
+    fetch('/api/likes')
+    .then(res => res.json())
+    .then(data => setLikes(data))
+  }, [])
+
 
   const updateUser = (user) => setUser(user)
+
   const addPost = (post) => {
     setPosts([...posts, post])
   }
@@ -77,6 +85,11 @@ const App = () => {
     const filteredPosts = posts.filter(post => post.id !== deletedPost.id)
     setPosts(filteredPosts)
   }
+
+  const handleAddLike = (newLike) => {
+    setLikes([...likes, newLike])
+    console.log(newLike)
+  }
   
 
   if(!user)return(
@@ -92,7 +105,7 @@ const App = () => {
       </header>
       <Routes>
         <Route path="/" element={<Home user={user} posts={posts} handleDeleteClick={handleDeleteClick} handleEditClick={handleEditClick} />} />
-        <Route path="/posts" element={<PostList posts={posts} />} />
+        <Route path="/posts" element={<PostList posts={posts} likes={likes} handleAddLike={handleAddLike} />} />
         <Route path="/posts/new" element={<PostForm addPost={addPost} />} />
         <Route path="/Authentication" element={<Authentication updateUser={updateUser} />} />
         <Route path="/groups" element={<GroupList groups={groups} updateGroup={updateGroup} />} />

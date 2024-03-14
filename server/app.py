@@ -21,7 +21,7 @@ from models import User, Post, UserGroup, Group, Like
 class Login(Resource):
     def post(self):
         try:
-            user = User.query.filter_by(username = request.get_json()['username']).first()
+            user = User.query.filter_by(username=request.get_json()['username']).first()
             if user.authenticate(request.get_json()['password']):
                 session['user_id'] = user.id
                 response = make_response(
@@ -59,11 +59,16 @@ api.add_resource(Logout, '/api/logout')
 
 class Signup(Resource):
     def post(self):
-        form_json = request.get_json()
-        new_user = User(username=form_json['username'], email=form_json['email'])
-        new_user.password_hash = form_json['password']
+        data = request.get_json()
+        username=data.get('username')
+        new_user = User(username=username, email=data.get('email'))
+        new_user.password_hash = data.get('password')
         db.session.add(new_user)
         db.session.commit()
+
+        user = User.query.filter_by(username=username).first()
+        session['user_id'] = user.id
+
 
         response = make_response(
             new_user.to_dict(),

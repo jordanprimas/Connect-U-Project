@@ -6,15 +6,11 @@ const GroupProvider = ({ children }) => {
     const [groups, setGroups] = useState([])
 
     useEffect(() => {
-        fetchGroups()
-      }, [])
+      fetch('/api/groups')
+      .then(res => res.json())
+      .then(data => setGroups(data))
+    }, [])
 
-
-    const fetchGroups = () => {
-        fetch('/api/groups')
-        .then(res => res.json())
-        .then(data => setGroups(data))
-      }
 
     return(
         <GroupContext.Provider value={[groups, setGroups]}>{children}</GroupContext.Provider>
