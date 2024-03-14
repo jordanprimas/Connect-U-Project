@@ -1,8 +1,9 @@
 import React, {useState} from 'react'
 
 
-const PostCard = ({ post, postLikes, handleAddLike }) => {
+const PostCard = ({ post, postLikes, handleAddLike, user }) => {
   const [liked, setLiked] = useState(false)
+  console.log(user.id)
 
   const handleLikeClick = () => {
     setLiked(!liked)
@@ -13,7 +14,7 @@ const PostCard = ({ post, postLikes, handleAddLike }) => {
         "Content-Type": "application/json"
       },
       body: JSON.stringify({
-        user_id: post.user.id,
+        user_id: user.id,
         post_id: post.id,
       }),
     })

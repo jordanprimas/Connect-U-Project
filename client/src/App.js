@@ -105,7 +105,7 @@ const App = () => {
       </header>
       <Routes>
         <Route path="/" element={<Home user={user} posts={posts} handleDeleteClick={handleDeleteClick} handleEditClick={handleEditClick} />} />
-        <Route path="/posts" element={<PostList posts={posts} likes={likes} handleAddLike={handleAddLike} />} />
+        <Route path="/posts" element={<PostList posts={posts} likes={likes} handleAddLike={handleAddLike} user={user} />} />
         <Route path="/posts/new" element={<PostForm addPost={addPost} />} />
         <Route path="/Authentication" element={<Authentication updateUser={updateUser} />} />
         <Route path="/groups" element={<GroupList groups={groups} updateGroup={updateGroup} />} />
