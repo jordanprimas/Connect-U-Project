@@ -3,38 +3,88 @@
 # Standard library imports
 
 # Remote library imports
-from flask import request, make_response, session, jsonify, abort
+from flask import request, make_response, session, jsonify, abort, url_for, redirect
 from flask_restful import Resource
 from sqlalchemy.exc import IntegrityError
 
-
-
 # Local imports
-from config import app, db, api
-# Add your model imports
+from config import app, api, db, oauth, secrets
 from models import User, Post, UserGroup, Group, Like
 
 
-# Views go here!
+google = oauth.register(
+    name='google',
+    client_id='876300808012-jl6se3g2i8qrk3f20gmg765ia8tcgq1m.apps.googleusercontent.com',
+    client_secret='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',
+    access_token_url='https://accounts.google.com/o/oauth2/token',
+    access_token_params=None,
+    authorize_url='https://accounts.google.com/o/oauth2/auth',
+    authorize_params=None,
+    api_base_url='https://www.googleapis.com/oauth2/v1/',
+    client_kwargs={'scope': 'email profile'},
+    server_metadata_url='https://accounts.google.com/.well-known/openid-configuration'
+)
+
+
+@app.route('/google')
+def google_login():
+    google = oauth.create_client('google')
+    state = secrets.token_urlsafe(16)
+    print("Generated state token:", state)
+    session['oauth_state'] = state
+    print("Session dictionary:", session)
+    print("Session state:", session['oauth_state'])
+    redirect_uri = url_for('google_auth', _external=True)
+    return google.authorize_redirect(redirect_uri, state=state)
+
+
+
+@app.route('/google/auth')
+def google_auth():
+    google = oauth.create_client('google')
+    token = google.authorize_access_token()
+    resp = google.get('userinfo')
+    user_info = resp.json()
+
+    try:
+        
+        existing_user = User.query.filter_by(email=user_info['email']).first()
+
+        if existing_user:
+            session['user_id'] = existing_user.id
+            return redirect('http://localhost:3000') 
+        else:
+            new_user = User(
+                username=user_info['email'],
+                email=user_info['email'],
+            )
+            db.session.add(new_user)
+            db.session.commit()
+            session['user_id'] = new_user.id
+            return redirect('http://localhost:3000') 
+    except Exception as e:
+        print("Exception during Google OAuth:", e)
+        abort(401, "Unauthorized")
+
 
 
 class Login(Resource):
     def post(self):
         try:
-            user = User.query.filter_by(username=request.get_json()['username']).first()
-            if user.authenticate(request.get_json()['password']):
+            user = User.query.filter_by(username=request.json['username']).first()
+            if user.authenticate(request.json['password']):
                 session['user_id'] = user.id
-                response = make_response(
-                user.to_dict(),
-                200
-            )
-            return response
-        except:
+                response = make_response(user.to_dict(), 200)
+                return response
+            else:
+                abort(401, "Incorrect Username or Password")
+        except Exception as e:
             abort(401, "Incorrect Username or Password")
 
 api.add_resource(Login, '/api/login')
 
 class AuthorizedSession(Resource):
+
     def get(self):
         try:
             user = User.query.filter_by(id=session.get('user_id')).first()
@@ -340,6 +390,30 @@ class LikeResource(Resource):
 
         return response
 api.add_resource(LikeResource, "/api/likes")
+
+class LikeByID(Resource):
+    def delete(self, id):
+        like = Like.query.filter_by(id=id).first()
+        if not like:
+            abort(404, "The like you are trying to delete can't be found!")
+
+        db.session.delete(like)
+        db.session.commit()
+
+        response_body = {
+            "delete_successful": True,
+            "message": "Like deleted",
+            "id": id
+        }
+        response = make_response(
+            response_body,
+            200
+        )
+        return response
+
+api.add_resource(LikeByID, '/api/likes/<int:id>')
+
+
 
 
 

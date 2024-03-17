@@ -88,7 +88,11 @@ const App = () => {
 
   const handleAddLike = (newLike) => {
     setLikes([...likes, newLike])
-    console.log(newLike)
+  }
+
+  const handleDeleteLike = (deletedLike) => {
+    const filteredLikes = likes.filter(like => like.id !== deletedLike.id)
+    setLikes(filteredLikes)
   }
   
 
@@ -105,7 +109,7 @@ const App = () => {
       </header>
       <Routes>
         <Route path="/" element={<Home user={user} posts={posts} handleDeleteClick={handleDeleteClick} handleEditClick={handleEditClick} />} />
-        <Route path="/posts" element={<PostList posts={posts} likes={likes} handleAddLike={handleAddLike} user={user} />} />
+        <Route path="/posts" element={<PostList posts={posts} likes={likes} handleAddLike={handleAddLike} user={user} handleDeleteLike={handleDeleteLike} />} />
         <Route path="/posts/new" element={<PostForm addPost={addPost} />} />
         <Route path="/Authentication" element={<Authentication updateUser={updateUser} />} />
         <Route path="/groups" element={<GroupList groups={groups} updateGroup={updateGroup} />} />
