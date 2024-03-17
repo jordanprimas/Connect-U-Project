@@ -15,7 +15,7 @@ from models import User, Post, UserGroup, Group, Like
 google = oauth.register(
     name='google',
     client_id='876300808012-jl6se3g2i8qrk3f20gmg765ia8tcgq1m.apps.googleusercontent.com',
-    client_secret='',
+    client_secret='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',
     access_token_url='https://accounts.google.com/o/oauth2/token',
     access_token_params=None,
     authorize_url='https://accounts.google.com/o/oauth2/auth',
@@ -109,22 +109,25 @@ api.add_resource(Logout, '/api/logout')
 
 class Signup(Resource):
     def post(self):
-        data = request.get_json()
-        username=data.get('username')
-        new_user = User(username=username, email=data.get('email'))
-        new_user.password_hash = data.get('password')
-        db.session.add(new_user)
-        db.session.commit()
+        try:
+            data = request.get_json()
+            username=data.get('username')
+            new_user = User(username=username, email=data.get('email'))
+            new_user.password_hash = data.get('password')
+            db.session.add(new_user)
+            db.session.commit()
 
-        user = User.query.filter_by(username=username).first()
-        session['user_id'] = user.id
-
-
-        response = make_response(
-            new_user.to_dict(),
-            201
-        )
-        return response
+            user = User.query.filter_by(username=username).first()
+            session['user_id'] = user.id
+            response = make_response(
+                new_user.to_dict(),
+                201
+            )
+            return response
+        except IntegrityError as e:
+            db.session.rollback()
+            return {'error': 'Please choose another username'}, 400
+    
 
 api.add_resource(Signup, '/api/signup')
 

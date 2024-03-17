@@ -47,6 +47,10 @@ function Authentication({ updateUser }) {
     window.location.href = 'http://localhost:5555/google'
   }
 
+  const handleSignUpClick = () => {
+    setSignUp((signUp) => !signUp)
+  }
+
   const formSchema = yup.object().shape({
     username: yup.string().required("Please enter a username"),
     password: yup.string().required("Please enter a password"),
@@ -75,7 +79,8 @@ function Authentication({ updateUser }) {
               navigate("/");
             });
           } else {
-            res.json().then((errorMessage) => setErrorMessage(errorMessage.message));
+            res.json()
+            .then(res => setErrorMessage(res.error))
           }
         });
     },
@@ -93,6 +98,11 @@ function Authentication({ updateUser }) {
         ))}
       <h2>Please log in or sign up</h2>
       <h2>{signUp ? "Already a member?" : "Not a member?"}</h2>
+
+      <button type="button" onClick={handleSignUpClick}>
+          {signUp ? "Log In!" : "Register now!"}
+        </button>
+
       <button
         onClick={handleClick}
         style={{
