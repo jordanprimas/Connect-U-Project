@@ -15,7 +15,7 @@ from models import User, Post, UserGroup, Group, Like
 google = oauth.register(
     name='google',
     client_id='876300808012-jl6se3g2i8qrk3f20gmg765ia8tcgq1m.apps.googleusercontent.com',
-    client_secret='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',
+    client_secret='',
     access_token_url='https://accounts.google.com/o/oauth2/token',
     access_token_params=None,
     authorize_url='https://accounts.google.com/o/oauth2/auth',
