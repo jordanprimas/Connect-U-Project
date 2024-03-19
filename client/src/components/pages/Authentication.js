@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import React, { useState } from "react";
+import { useNavigate, Link } from "react-router-dom";
 import { useFormik } from "formik";
 import * as yup from "yup";
 
@@ -8,42 +8,8 @@ function Authentication({ updateUser }) {
   const [errorMessage, setErrorMessage] = useState(null);
   const navigate = useNavigate();
 
-  // const handleCallbackResponse = (response) => {
-  //   console.log(response);
-  //   console.log("Handle Google Auth Callback Here");
-  //   // Handle Google Auth Callback Here
-  //   const urlParams = new URLSearchParams(window.location.search);
-  //   const stateParam = urlParams.get("state");
-
-  //   // Validate state parameter
-  //   if (stateParam !== googleState) {
-  //     console.error("CSRF Warning! State mismatch.");
-  //     return;
-  //   }
-
-  //   window.location.href = "http://localhost:5555/google";
-  // };
-
-  // useEffect(() => {
-  //   const google = window.google;
-  //   // if (!google) {
-  //   //   console.error("Google API not loaded");
-  //   //   return;
-  //   // }
-
-  //   google.accounts.id.initialize({
-  //     client_id: "876300808012-jl6se3g2i8qrk3f20gmg765ia8tcgq1m.apps.googleusercontent.com",
-  //     callback: handleCallbackResponse,
-  //   });
-  // }, []);
-
+  
   const handleClick = () => {
-    // event.preventDefault();
-    // Generate a random state parameter
-    // const stateParam = generateRandomState();
-    // setGoogleState(stateParam);
-
-    // Redirect to backend Google OAuth route with state parameter
     window.location.href = 'http://localhost:5555/google'
   }
 
@@ -55,7 +21,7 @@ function Authentication({ updateUser }) {
     username: yup.string().required("Please enter a username"),
     password: yup.string().required("Please enter a password"),
     email: signUp ? yup.string().email("Invalid email address") : yup.string(),
-  });
+  })
 
   const formik = useFormik({
     initialValues: {
@@ -75,16 +41,16 @@ function Authentication({ updateUser }) {
         .then((res) => {
           if (res.ok) {
             res.json().then((user) => {
-              updateUser(user);
-              navigate("/");
-            });
+              updateUser(user)
+              navigate("/")
+            })
           } else {
             res.json()
             .then(res => setErrorMessage(res.error))
           }
-        });
+        })
     },
-  });
+  })
 
 
   return (
@@ -123,7 +89,10 @@ function Authentication({ updateUser }) {
         />
         Sign in with Google
       </button>
-
+      {/* Google button using react router Link */}
+      {/* <Link to="http://localhost:5555/google" className="google-button">
+        Sign In or Log In With Google
+      </Link> */}
       <form onSubmit={formik.handleSubmit}>
         <div>
           <label>Username</label>
@@ -160,7 +129,7 @@ function Authentication({ updateUser }) {
         <button type="submit">{signUp ? "Sign up" : "Log in"}</button>
       </form>
     </div>
-  );
+  )
 }
 
 export default Authentication;

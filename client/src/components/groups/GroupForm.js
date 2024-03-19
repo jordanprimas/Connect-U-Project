@@ -1,5 +1,5 @@
 import { useState } from "react";
-import {useFormik} from "formik"
+import { useFormik } from "formik"
 import * as yup from "yup"
 
 const GroupForm = ({ groupId, updateGroup }) => {
@@ -20,14 +20,17 @@ const GroupForm = ({ groupId, updateGroup }) => {
       })
       .then((res) => {
         if (res.ok) {
-          return res.json();
+          res.json().then(data => {
+            updateGroup(data)
+            formik.resetForm()
+          })
         } else {
-          throw new Error("Failed to join group");
+          res.json()
+          .then(res => setErrorMessage(res.error))  
         }
       })
-      .then(data => updateGroup(data))
     }
-  };
+  }
 
   const formSchema = yup.object().shape({
     message: yup.string().max(10, "message must be no longer than 10 characters.")
@@ -56,7 +59,7 @@ const GroupForm = ({ groupId, updateGroup }) => {
         />
       </div>
     </div>
-  );
-};
+  )
+}
 
 export default GroupForm;

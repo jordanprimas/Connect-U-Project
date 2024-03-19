@@ -64,3 +64,6 @@ __pycache__
 instance
 .vscode
 package-lock.json
+
+# google oauth key and id 
+.env

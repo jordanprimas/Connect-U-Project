@@ -8,22 +8,16 @@ from flask_restful import Resource
 from sqlalchemy.exc import IntegrityError
 
 # Local imports
-from config import app, api, db, oauth, secrets
+from config import app, api, db, oauth, secrets, google
 from models import User, Post, UserGroup, Group, Like
 
 
-google = oauth.register(
-    name='google',
-    client_id='876300808012-jl6se3g2i8qrk3f20gmg765ia8tcgq1m.apps.googleusercontent.com',
-    client_secret='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',
-    access_token_url='https://accounts.google.com/o/oauth2/token',
-    access_token_params=None,
-    authorize_url='https://accounts.google.com/o/oauth2/auth',
-    authorize_params=None,
-    api_base_url='https://www.googleapis.com/oauth2/v1/',
-    client_kwargs={'scope': 'email profile'},
-    server_metadata_url='https://accounts.google.com/.well-known/openid-configuration'
-)
+
+
+@app.route('/hello')
+def hello():
+    print("hello")
+    return "hello"
 
 
 @app.route('/google')
@@ -38,14 +32,17 @@ def google_login():
     return google.authorize_redirect(redirect_uri, state=state)
 
 
-
 @app.route('/google/auth')
 def google_auth():
+    state = request.args.get('state')
+    print("Google auth state:", state)
     google = oauth.create_client('google')
+    print("google", google)
     token = google.authorize_access_token()
+    print("token", token)
     resp = google.get('userinfo')
     user_info = resp.json()
-
+    
     try:
         
         existing_user = User.query.filter_by(email=user_info['email']).first()

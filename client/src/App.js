@@ -6,10 +6,10 @@ import PostForm from "./components/posts/PostForm";
 import Home from "./components/pages/Home";
 import Authentication from "./components/pages/Authentication"
 import GroupList from "./components/groups/GroupList"
-import './index.css'
 import { GroupContext } from "./contexts/GroupContext";
 import { PostContext } from "./contexts/PostContext"
 import { UserContext } from "./contexts/UserContext";
+import './index.css'
 
 const App = () => {
   const [user, setUser] = useContext(UserContext)
