@@ -11,6 +11,12 @@ function Authentication({ updateUser }) {
   
   const handleClick = () => {
     window.location.href = 'http://localhost:5555/google'
+      // fetch('http://localhost:5555/google', {
+      //   method: 'GET'
+      // })
+      // .then(res => res.json())
+      // .then(data => console.log(data))
+
   }
 
   const handleSignUpClick = () => {

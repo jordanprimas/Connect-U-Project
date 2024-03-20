@@ -1,6 +1,3 @@
-# Standard library imports
-
-# Remote library imports
 from flask import Flask
 from flask_cors import CORS
 from flask_migrate import Migrate
@@ -15,8 +12,6 @@ from authlib.integrations.flask_client import OAuth
 from dotenv import load_dotenv
 
 
-# Local imports
-
 # Instantiate app, set attributes
 app = Flask(__name__)
 
@@ -25,7 +20,6 @@ app = Flask(__name__)
 app.secret_key = secrets.token_hex(24)
 
 bcrypt = Bcrypt(app)
-oauth = OAuth(app)
 
 
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///app.db'
@@ -53,9 +47,11 @@ db.init_app(app)
 api = Api(app)
 
 # Instantiate CORS
-CORS(app)
+CORS(app, resources={r"/google/*":{"origins": "http://localhost:3000"}})
 
 # Configure oauth
+oauth = OAuth(app)
+
 load_dotenv()
 google = oauth.register(
     name='google',
@@ -69,5 +65,3 @@ google = oauth.register(
     client_kwargs={'scope': 'email profile'},
     server_metadata_url='https://accounts.google.com/.well-known/openid-configuration'
 )
-
-print(google.client_id)

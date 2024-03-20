@@ -13,13 +13,6 @@ from models import User, Post, UserGroup, Group, Like
 
 
 
-
-@app.route('/hello')
-def hello():
-    print("hello")
-    return "hello"
-
-
 @app.route('/google')
 def google_login():
     google = oauth.create_client('google')
@@ -75,8 +68,8 @@ class Login(Resource):
                 return response
             else:
                 abort(401, "Incorrect Username or Password")
-        except Exception as e:
-            abort(401, "Incorrect Username or Password")
+        except:
+            return {"error": "Incorrect Username or Password"}, 401
 
 api.add_resource(Login, '/api/login')
 
