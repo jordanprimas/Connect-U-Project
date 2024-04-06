@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useFormik } from "formik";
 import * as yup from "yup";
 
@@ -11,12 +11,6 @@ function Authentication({ updateUser }) {
   
   const handleClick = () => {
     window.location.href = 'http://localhost:5555/google'
-      // fetch('http://localhost:5555/google', {
-      //   method: 'GET'
-      // })
-      // .then(res => res.json())
-      // .then(data => console.log(data))
-
   }
 
   const handleSignUpClick = () => {
@@ -26,7 +20,7 @@ function Authentication({ updateUser }) {
   const formSchema = yup.object().shape({
     username: yup.string().required("Please enter a username"),
     password: yup.string().required("Please enter a password"),
-    email: signUp ? yup.string().email("Invalid email address") : yup.string(),
+    email: signUp ? yup.string().email("Invalid email address").required("Please enter an email") : yup.string(),
   })
 
   const formik = useFormik({

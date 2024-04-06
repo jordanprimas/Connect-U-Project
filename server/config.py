@@ -47,7 +47,7 @@ db.init_app(app)
 api = Api(app)
 
 # Instantiate CORS
-CORS(app, resources={r"/google/*":{"origins": "http://localhost:3000"}})
+CORS(app)
 
 # Configure oauth
 oauth = OAuth(app)

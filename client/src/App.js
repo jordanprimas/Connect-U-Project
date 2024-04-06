@@ -16,6 +16,7 @@ const App = () => {
   const [posts, setPosts] = useContext(PostContext)
   const [groups, setGroups] = useContext(GroupContext)
   const [likes, setLikes] = useState([])
+
   
   useEffect(() => {
     fetch('/api/likes')
@@ -51,7 +52,30 @@ const App = () => {
     })
     setGroups(updatedGroups)
   }
+
+  const deleteUserGroup = (deletedUserGroup) => {
+    const group = groups.find(group => group.id === deletedUserGroup.group.id) 
+    const userGroupIndex = group.user_groups.findIndex(userGroup => userGroup.id === deletedUserGroup.id)
+    const userGroups = group.user_groups
+    const removedUserGroup = userGroups.splice(userGroupIndex, 1)
+    console.log(userGroups)
+
+    const updatedGroup = {
+      ...group,
+      user_groups: userGroups
+    }
+    console.log(updatedGroup)
+    const updatedGroups = groups.map(group => {
+      if (group.id === updatedGroup.id) {
+        return updatedGroup
+      } else {
+        return group
+      }
+    })
+    setGroups(updatedGroups)
+  }
   
+
 
   const handleEditClick = (id, newPostObj) => {
     fetch(`/api/posts/${id}`, {
@@ -112,7 +136,7 @@ const App = () => {
         <Route path="/posts" element={<PostList posts={posts} likes={likes} handleAddLike={handleAddLike} user={user} handleDeleteLike={handleDeleteLike} />} />
         <Route path="/posts/new" element={<PostForm addPost={addPost} />} />
         <Route path="/Authentication" element={<Authentication updateUser={updateUser} />} />
-        <Route path="/groups" element={<GroupList groups={groups} updateGroup={updateGroup} />} />
+        <Route path="/groups" element={<GroupList groups={groups} updateGroup={updateGroup} deleteUserGroup={deleteUserGroup} />} />
       </Routes>
     </>
   );

@@ -3,16 +3,17 @@ import React, { useState, useEffect } from 'react';
 const PostCard = ({ post, postLikes, handleAddLike, user, handleDeleteLike }) => {
   const [liked, setLiked] = useState(false);
 
+  const like = postLikes.find(like => like.user_id === user.id)
+
   useEffect(() => {
-    const userLikedPost = postLikes.find(like => like.user_id === user.id)
-    if (userLikedPost) {
+    if (like) {
       setLiked(true)
     } else {
       setLiked(false)
     }
   }, [postLikes, user.id])
 
-  const like = postLikes.find(like => like.user_id === user.id)
+  
 
   const handleLikeClick = () => {
     if (!liked) {
@@ -41,7 +42,7 @@ const PostCard = ({ post, postLikes, handleAddLike, user, handleDeleteLike }) =>
         setLiked(false)
       });
     } else {
-      setLiked(false);
+      setLiked(false)
       fetch(`/api/likes/${like.id}`, {
         method: "DELETE",
       })

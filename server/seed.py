@@ -21,10 +21,10 @@ if __name__ == '__main__':
         UserGroup.query.delete()
         Like.query.delete()
 
-        u1 = User(username = "jordan1234", email = "email", password_hash = "12345")
-        u2 = User(username = "cashew1234", email = "email two", password_hash = "23456")
-        u3 = User(username = "arya1234", email = "email three", password_hash = "password")
-        u4 = User(username = "username", email = "email four", password_hash = "hello world")
+        u1 = User(username = "jordan1234", email = "email@gmail.com", password_hash = "12345")
+        u2 = User(username = "cashew1234", email = "emailtwo@gmail.com", password_hash = "23456")
+        u3 = User(username = "arya1234", email = "emailthree@gmail.com", password_hash = "password")
+        u4 = User(username = "username", email = "emailfour@gmail.com", password_hash = "hello world")
 
         db.session.add_all([u1, u2, u3, u4])
         db.session.commit()

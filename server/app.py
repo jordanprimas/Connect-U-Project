@@ -114,6 +114,9 @@ class Signup(Resource):
                 201
             )
             return response
+        except ValueError as e:
+            db.session.rollback()
+            return {'error': str(e)}, 400
         except IntegrityError as e:
             db.session.rollback()
             return {'error': 'Please choose another username'}, 400
@@ -153,6 +156,8 @@ class UserResource(Resource):
                 201
             )
             return response
+        except ValueError as e:
+            return {'error': str(e)}, 400
         except IntegrityError as e:
             db.session.rollback()
             return {'error': 'Username already exists'}, 400
@@ -174,26 +179,29 @@ class AllPost(Resource):
         return response
 
     def post(self):
-        user_id = session['user_id']
-        data = request.get_json()
+        try:
+            user_id = session['user_id']
+            data = request.get_json()
 
-        new_post = Post(
-        title = data.get('title'),
-        content = data.get('content'),
-        user_id = user_id
-        )
+            new_post = Post(
+            title = data.get('title'),
+            content = data.get('content'),
+            user_id = user_id
+            )
 
-        db.session.add(new_post)
-        db.session.commit()
+            db.session.add(new_post)
+            db.session.commit()
 
-        response_dict = new_post.to_dict()
+            response_dict = new_post.to_dict()
 
-        response = make_response(
-            response_dict,
-            201
-        )
+            response = make_response(
+                response_dict,
+                201
+            )
 
-        return response
+            return response
+        except ValueError as e:
+            return {'error': str(e)}, 400
 
 api.add_resource(AllPost, "/api/posts")
 
@@ -265,23 +273,26 @@ class GroupResource(Resource):
         return response
     
     def post(self):
-        data = request.get_json()
+        try:
+            data = request.get_json()
 
-        new_group = Group(
-            name=data.get("name"),
-        )
+            new_group = Group(
+                name=data.get("name"),
+            )
 
 
-        db.session.add(new_group)
-        db.session.commit()
+            db.session.add(new_group)
+            db.session.commit()
 
-        new_group_dict = new_group.to_dict()
+            new_group_dict = new_group.to_dict()
 
-        response = make_response(
-            new_group_dict,
-            201
-        )
-        return response
+            response = make_response(
+                new_group_dict,
+                201
+            )
+            return response
+        except ValueError as e:
+            return {'error': str(e)}, 400
 
 api.add_resource(GroupResource, "/api/groups")  
 
@@ -301,15 +312,15 @@ class UserGroupResource(Resource):
         return response
 
     def post(self):
-        user_id = session['user_id']
-
         data = request.get_json()
-        group_id = data.get("group_id")
+        user_id = session['user_id']
+        group_id = data.get('group_id')
 
         existing_user_group = UserGroup.query.filter_by(user_id=user_id, group_id=group_id).first()
+
         if existing_user_group:
             response_body = {
-                "error": "User already in this group",
+                "error": "User already in this group"
             }
             response = make_response(
                 response_body,
@@ -317,25 +328,52 @@ class UserGroupResource(Resource):
             )
             return response
 
-        new_user_group = UserGroup(
-            message=data.get("message"),
-            user_id=user_id,
-            group_id=group_id
-        )
+        else:
+            try:
+                new_user_group = UserGroup(
+                    message=data.get("message"),
+                    user_id=user_id,
+                    group_id=group_id
+                )
 
-        db.session.add(new_user_group)
-        db.session.commit()
+                db.session.add(new_user_group)
+                db.session.commit()
 
-        user_group_dict = new_user_group.to_dict()
+                user_group_dict = new_user_group.to_dict()
 
-        response = make_response(
-            user_group_dict,
-            201
-        )
+                response = make_response(
+                    user_group_dict,
+                    201
+                )
 
-        return response
+                return response
+            except ValueError as e:
+                return {'error': str(e)}, 400
 
 api.add_resource(UserGroupResource, "/api/user_groups")
+
+class UserGroupById(Resource):
+    def delete(self, id):
+        user_group = UserGroup.query.filter_by(id=id).first()
+
+        if not user_group:
+            abort(404, "The user group you are trying to delete can't be found")
+        
+        db.session.delete(user_group)
+        db.session.commit()
+
+        response_body = {
+            "delete_successful": True,
+            "message": "Post deleted",
+            "id": id
+        }
+        response = make_response(
+            response_body,
+            200
+        )
+        return response
+
+api.add_resource(UserGroupById, "/api/user_groups/<int:id>")
 
 
 class LikeResource(Resource):

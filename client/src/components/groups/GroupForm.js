@@ -1,13 +1,32 @@
-import { useState } from "react";
+import { useState, useEffect, useContext } from "react";
 import { useFormik } from "formik"
+import { UserContext } from "../../contexts/UserContext"
 import * as yup from "yup"
+import { GroupContext } from "../../contexts/GroupContext";
 
-const GroupForm = ({ groupId, updateGroup }) => {
-  const [errorMessage, setErrorMessage] = useState(null);
+const GroupForm = ({ groupId, updateGroup, userGroups, deleteUserGroup }) => {
+  const [errorMessage, setErrorMessage] = useState(null)
+  const [joinGroup, setJoinGroup] = useState(false)
+  const [user, setUser] = useContext(UserContext)
+  const [groups, setGroups] = useContext(GroupContext)
 
+  const userJoinedGroup = userGroups.find(userGroup => userGroup.user_id === user.id)
+  const userGroupId = userJoinedGroup ? userJoinedGroup.id : null
+
+  // console.log(userJoinedGroup)
+
+
+  useEffect(() => {
+    if (userJoinedGroup) {
+      setJoinGroup(true)
+    } else {
+      setJoinGroup(false)
+    }
+  }, [userGroups, user.id])
 
   const handleClick = () => {
-    if (formik.isValid) {
+    if (!joinGroup) {
+      setJoinGroup(true)
       fetch("/api/user_groups", {
         method: "POST",
         headers: {
@@ -29,6 +48,24 @@ const GroupForm = ({ groupId, updateGroup }) => {
           .then(res => setErrorMessage(res.error))  
         }
       })
+    } else {
+      setJoinGroup(false)
+      if (userGroupId) {
+        
+        fetch(`/api/user_groups/${userGroupId}`, {
+          method: "DELETE",
+        })
+        .then(res => {
+          if (res.ok) {
+            return res.json()
+          } else {
+            throw Error("Failed to leave group")
+          }
+        })
+        .then(deleteUserGroup(userJoinedGroup))
+      } else {
+        throw Error("No user group id found")
+      }
     }
   }
 
@@ -47,7 +84,7 @@ const GroupForm = ({ groupId, updateGroup }) => {
     <div>
       {errorMessage && <p style={{ color:"red" }}>{errorMessage}</p>}
       {formik.errors && Object.values(formik.errors).map(error => <p style={{ color:"red" }}>{error}</p>)}
-      <button onClick={handleClick}>Join Group</button>
+      <button onClick={handleClick}>{joinGroup ? "Leave Group" : "Join Group"}</button>
       <div>
         <input
           type="text"
