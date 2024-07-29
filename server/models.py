@@ -5,7 +5,7 @@ from sqlalchemy.orm import validates
 from datetime import datetime
 import re
 
-
+# Local imports 
 from config import db, bcrypt, generate_password_hash, check_password_hash
 
 # Models go here!
@@ -52,7 +52,7 @@ class User(db.Model, SerializerMixin):
             raise ValueError("Username must be between 3 and 20 characters")
         return username
 
-
+    
     def __repr__(self):
         return f'<User {self.username}, {self.email}>'
 

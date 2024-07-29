@@ -3,7 +3,7 @@
 # Standard library imports
 
 # Remote library imports
-from flask import request, make_response, session, jsonify, abort, url_for, redirect
+from flask import request, make_response, session, abort, url_for, redirect
 from flask_restful import Resource
 from sqlalchemy.exc import IntegrityError
 
@@ -17,10 +17,9 @@ from models import User, Post, UserGroup, Group, Like
 def google_login():
     google = oauth.create_client('google')
     state = secrets.token_urlsafe(16)
-    print("Generated state token:", state)
+    
     session['oauth_state'] = state
-    print("Session dictionary:", session)
-    print("Session state:", session['oauth_state'])
+    
     redirect_uri = url_for('google_auth', _external=True)
     return google.authorize_redirect(redirect_uri, state=state)
 
@@ -29,7 +28,7 @@ def google_login():
 def google_auth():
     state = request.args.get('state')
     print("Google auth state:", state)
-    google = oauth.create_client('google')
+    google = oauth.create_client('google') #
     print("google", google)
     token = google.authorize_access_token()
     print("token", token)
@@ -73,8 +72,8 @@ class Login(Resource):
 
 api.add_resource(Login, '/api/login')
 
-class AuthorizedSession(Resource):
 
+class AuthorizedSession(Resource):
     def get(self):
         try:
             user = User.query.filter_by(id=session.get('user_id')).first()
@@ -450,6 +449,6 @@ api.add_resource(LikeByID, '/api/likes/<int:id>')
 
 
 
-
+# app.run() method to run development server treating application as a script 
 if __name__ == '__main__':
     app.run(port=5555, debug=True)

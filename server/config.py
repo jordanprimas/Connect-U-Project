@@ -12,7 +12,7 @@ from authlib.integrations.flask_client import OAuth
 from dotenv import load_dotenv
 
 
-# Instantiate app, set attributes
+# Instantiate Flask app object, set attributes
 app = Flask(__name__)
 
 
@@ -21,27 +21,36 @@ app.secret_key = secrets.token_hex(24)
 
 bcrypt = Bcrypt(app)
 
-
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///app.db'
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-app.json.compact = False
-
-app.config['SESSION_TYPE'] = 'filesystem'
-app.config['SERVER_NAME'] = 'localhost:5555'
-
-app.config['SESSION_PERMANENT'] = True
-
-Session(app)
-
-
-
 # Define metadata, instantiate db
 metadata = MetaData(naming_convention={
     "fk": "fk_%(table_name)s_%(column_0_name)s_%(referred_table_name)s",
 })
 db = SQLAlchemy(metadata=metadata)
+
+# Configure a database connection to the local file app.db 
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///app.db'
+# Disable modification tracking to use less memory 
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+# Ensure each key/value json pair is displayed on a separate line 
+app.json.compact = False
+
+# Create a Migrate object to manage schema modifications 
 migrate = Migrate(app, db)
+# Initialize the Flask application to use the database 
 db.init_app(app)
+
+
+
+
+app.config['SESSION_TYPE'] = 'filesystem'
+app.config['SERVER_NAME'] = 'localhost:5555'
+
+app.config['SESSION_PERMANENT'] = True
+app.json.compact = False
+
+Session(app)
+
+
 
 # Instantiate REST API
 api = Api(app)
@@ -63,5 +72,8 @@ google = oauth.register(
     authorize_params=None,
     api_base_url='https://www.googleapis.com/oauth2/v1/',
     client_kwargs={'scope': 'email profile'},
+    # scope - what google will return to us this information in the user_info variable in app.py route
     server_metadata_url='https://accounts.google.com/.well-known/openid-configuration'
 )
+
+

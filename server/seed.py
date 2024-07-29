@@ -11,20 +11,25 @@ from app import app
 from models import db, User, Post, Group, UserGroup, Like
 
 if __name__ == '__main__':
+    # Instantiate a Faker instance 
     fake = Faker()
+
+    # Create application context 
     with app.app_context():
         print("Starting seed...")
         
-        User.query.delete()
-        Post.query.delete()
-        Group.query.delete()
-        UserGroup.query.delete()
+        # Delete all rows in each table 
         Like.query.delete()
+        Post.query.delete()
+        UserGroup.query.delete()
+        Group.query.delete()
+        User.query.delete()
 
-        u1 = User(username = "jordan1234", email = "email@gmail.com", password_hash = "12345")
-        u2 = User(username = "cashew1234", email = "emailtwo@gmail.com", password_hash = "23456")
-        u3 = User(username = "arya1234", email = "emailthree@gmail.com", password_hash = "password")
-        u4 = User(username = "username", email = "emailfour@gmail.com", password_hash = "hello world")
+
+        u1 = User(username = "jordan1234", email = fake.email(), password_hash = "12345")
+        u2 = User(username = "cashew1234", email = fake.email(), password_hash = "23456")
+        u3 = User(username = "arya1234", email = fake.email(), password_hash = "password")
+        u4 = User(username = "username", email = fake.email(), password_hash = "hello world")
 
         db.session.add_all([u1, u2, u3, u4])
         db.session.commit()
