@@ -1,6 +1,6 @@
 # Connect-U-Project 
 [View Demo](https://youtu.be/5fOqXF_yU9w)
-A social media application that allows users to create their own account, publish posts, and join groups with other users with similar interests. 
+A social media application that allows users to create their own accounts, publish posts, and join groups with other users with similar interests. 
 
 ## About the Project
 Connect-U-Project is a full-stack application utilizing Flask for the backend and React for the frontend.
@@ -81,11 +81,11 @@ Connect-U allows users to:
 * Join groups with other users who have similar intrests
 
 ### User Interface Walkthrough
-1. **Home Page:** After logging in, users are directed to the home page where they can create a new post, view all their posts, and edit/delete those posts
-2. **Navigation Bar:** The navigation bar includes links to the home page, all users posts, and all groups 
-3. **Posts Page:** Users can view posts for all other users
-4. **Groups Page:** Users can view and join groups 
-5. **Logout button:** Users can logout of their account and return to the login page
+1. **Home Page:** After logging in, users are directed to the home page where they can create a new post, view all their posts, and edit/delete those posts.
+2. **Navigation Bar:** The navigation bar includes links to the home page, all user's posts, and all groups. 
+3. **Posts Page:** Users can view posts for all other users.
+4. **Groups Page:** Users can view and join groups.
+5. **Logout button:** Users can logout of their account and return to the login page.
 
 ## Contributing 
 Contributions are what make the open-source community such an amazing place to learn, inspire, and create. Any contributions you make are greatly appreciated.
@@ -99,10 +99,10 @@ Contributions are what make the open-source community such an amazing place to l
 If you have a suggestion that would make this project better, please fork the repo and create a pull request. You can also simply open an issue with the tag "enhancement". Thanks again!
 
 ## Contact 
-Jordan Primas - [email] (jorprimas20@gmail.com)
-Project Link: (https://github.com/jordanprimas/Connect-U-Project.git)
+Jordan Primas - [email](jorprimas20@gmail.com)
+Project Link: [github link](https://github.com/jordanprimas/Connect-U-Project.git)
 
 ## Resources
-[Flask Application With Google Login] (https://realpython.com/flask-google-login/)
-[Flask - Google OAuth2 Video] (https://www.youtube.com/watch?v=BfYsdNaHrps&t=388s)
-[Flask SQLAlchemy Documentation] (https://flask-sqlalchemy.palletsprojects.com/en/3.0.x/quickstart/)
+[Flask Application With Google Login](https://realpython.com/flask-google-login/)
+[Flask - Google OAuth2 Video](https://www.youtube.com/watch?v=BfYsdNaHrps&t=388s)
+[Flask SQLAlchemy Documentation](https://flask-sqlalchemy.palletsprojects.com/en/3.0.x/quickstart/)
