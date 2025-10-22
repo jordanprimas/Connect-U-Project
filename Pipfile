@@ -21,4 +21,5 @@ requests = "*"
 python-dotenv = "*"
 
 [requires]
-python_full_version = "3.8.13"
+python_version = "3.12"
+

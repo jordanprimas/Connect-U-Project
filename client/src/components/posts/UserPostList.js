@@ -8,7 +8,8 @@ const UserPostList = ( {postList, handleEditClick, handleDeleteClick} ) => {
     ))
 
   return (
-    <div className="cards">
+    // Render cards to page 
+    <div className="grid grid-cols-3 place-items-center">
         {userPostElementList}
     </div>
   )

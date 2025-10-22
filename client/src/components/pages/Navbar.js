@@ -1,10 +1,16 @@
-import React from 'react'
-import { NavLink, useNavigate } from "react-router-dom"
-import './Navbar.css'
+import {useState} from 'react';
+import { NavLink, useNavigate } from "react-router-dom";
+// import './Navbar.css;'
+import { BsArrowLeftShort, BsPostcardHeart, BsPeopleFill } from "react-icons/bs";
+import { IoHome } from "react-icons/io5";
+
+
+
 
 
 
 const NavBar = ({updateUser}) => {
+    const [open, setOpen] = useState(true)
     const navigate = useNavigate()
 
 
@@ -20,34 +26,53 @@ const NavBar = ({updateUser}) => {
         })
     }
 
+    const links = [
+        {to: "/", lable: "Home", icon:<IoHome size={22} /> },
+        {to: "/posts", lable: "Posts", icon:<BsPostcardHeart size={22} /> },
+        {to: "/groups", lable: "Groups", icon:<BsPeopleFill size={22} /> },
+    ]
+
     return (
-        <div>
-            <button className="logout-button" onClick={handleLogout}>
-                Logout
-            </button>
-            <nav>
-                <NavLink
-                    to="/"
-                    className="nav-link"
-                >
-                    Home
-                </NavLink>
-                <NavLink
-                    to="/posts"
-                    className="nav-link"
-                >
-                    All Posts
-                </NavLink>
-                <NavLink
-                    to="/groups"
-                    className="nav-link"
-                >
-                    All Groups 
-                </NavLink>
-            </nav>
+        <div className="flex">
+            <div className={`flex flex-col justify-between bg-[#3d7e9f] h-screen p-5 pt-8 ${open ? "w-72" : "w-20"} duration-300 relative`}>
+                
+                {/*Toggle button */}
+                <BsArrowLeftShort className={`bg-white text-[#3d7e9f] text-3xl rounded-full absolute -right-3 top-9 
+                border border-[#3d7e9f] cursor-pointer ${!open && "rotate-180"}`}
+                onClick={() => setOpen(!open)}
+                />
+
+                {/*Nav links */} 
+                <nav className="flex flex-col justify-center mt-16 space-y-6 gap-5">
+                    {links.map((link) => (
+                        <NavLink
+                            key={link.to}
+                            to={link.to}
+                            className={({ isActive }) =>
+                                `flex items-center gap-4 rounded-md cursor-pointer p-3 transition-all duration-200
+                                ${isActive ? 
+                                "bg-[#86ABBD] text-white" : "text-white hover:bg-[#4f90ae]"
+                                }`
+                            }
+                        >
+                            <span className="text-2xl">{link.icon}</span>
+                            <span className={`${!open && "hidden"} text-base font-medium`}>
+                                
+                            {link.lable}</span>
+
+                        </NavLink>
+                      
+                ))}
+                </nav>
+
+                {/* //Logout button */}
+                <button onClick={handleLogout} className="text-white hover:text-gray-200 transistion">
+                    Logout
+                </button>
+            </div>
         </div> 
     )
 }
-
+ 
 export default NavBar
 
