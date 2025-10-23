@@ -9,7 +9,7 @@ import GroupList from "./components/groups/GroupList"
 import { GroupContext } from "./contexts/GroupContext";
 import { PostContext } from "./contexts/PostContext"
 import { UserContext } from "./contexts/UserContext";
-import './index.css'
+import './index.css';
 
 const App = () => {
   const [user, setUser] = useContext(UserContext)
@@ -127,18 +127,16 @@ const App = () => {
   )
   
   return (
-    <>
-      <header>
-        <NavBar updateUser={updateUser} />
-      </header>
-      <Routes>
+    // Render Navbar
+    <Routes>
+      <Route element={<NavBar updateUser={updateUser} />} >
         <Route path="/" element={<Home user={user} posts={posts} handleDeleteClick={handleDeleteClick} handleEditClick={handleEditClick} />} />
         <Route path="/posts" element={<PostList posts={posts} likes={likes} handleAddLike={handleAddLike} user={user} handleDeleteLike={handleDeleteLike} />} />
         <Route path="/posts/new" element={<PostForm addPost={addPost} />} />
         <Route path="/Authentication" element={<Authentication updateUser={updateUser} />} />
         <Route path="/groups" element={<GroupList groups={groups} updateGroup={updateGroup} deleteUserGroup={deleteUserGroup} />} />
-      </Routes>
-    </>
+      </Route>
+    </Routes>
   );
 }
 

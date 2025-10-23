@@ -6,7 +6,7 @@ body {
   background-color: #F7F5EB;
 }
 
-.cards {
+/* .cards {
   display: grid;
   grid-template-columns: repeat(3, minmax(230px, 1fr));
   grid-gap: 20px;
@@ -90,4 +90,4 @@ body {
 
 }
 
-       
+        */
