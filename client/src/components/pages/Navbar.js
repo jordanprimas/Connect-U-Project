@@ -28,15 +28,15 @@ const NavBar = ({updateUser}) => {
     }
 
     const links = [
-        {to: "/", lable: "Home", icon:<IoHome size={22} /> },
-        {to: "/posts", lable: "Posts", icon:<BsPostcardHeart size={22} /> },
-        {to: "/groups", lable: "Groups", icon:<BsPeopleFill size={22} /> },
+        {to: "/", lable: "Home", icon:<IoHome size={22} />, end: true },
+        {to: "/posts", lable: "Posts", icon:<BsPostcardHeart size={22} />, end: true },
+        {to: "/groups", lable: "Groups", icon:<BsPeopleFill size={22} />, end: false },
     ]
 
     return (
         <div className="flex">
             <div 
-            className={`flex flex-col justify-between bg-[#3d7e9f] h-screen p-5 pt-8 
+            className={`flex flex-col justify-between bg-[#3D7E9F] h-screen p-5 pt-8 
             ${open ? "w-72" : "w-20"} duration-300 fixed`}
             >
                 
@@ -52,10 +52,11 @@ const NavBar = ({updateUser}) => {
                         <NavLink
                             key={link.to}
                             to={link.to}
+                            end={link.end}
                             className={({ isActive }) =>
                                 `flex items-center gap-4 rounded-md cursor-pointer p-3 transition-all duration-200
                                 ${isActive ? 
-                                "bg-[#86ABBD] text-white" : "text-white hover:bg-[#4f90ae]"
+                                "bg-[#86ABBD] text-white" : "text-white hover:bg-[#357187]"
                                 }`
                             }
                         >
