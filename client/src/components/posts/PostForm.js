@@ -39,7 +39,7 @@ const PostForm = ({ addPost }) => {
 
   return (
     <div>
-      <h3 className='add-post-title'>Create a new post</h3>
+      <h3 className='flex justify-end text-purple-400'>Create a new post</h3>
       <Formik
         initialValues={initialValues}
         validationSchema={formSchema}

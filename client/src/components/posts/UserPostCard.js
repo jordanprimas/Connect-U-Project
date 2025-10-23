@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import * as yup from 'yup';
 import { Formik, useFormikContext } from 'formik';
 import { FiMoreHorizontal } from "react-icons/fi";
+import { GoHeartFill } from "react-icons/go";
+
 
 
 const ErrorMessage = ({ name }) => {
@@ -81,27 +83,40 @@ const UserPostCard = ({ post, handleEditClick, handleDeleteClick }) => {
       ) : (
 
         // Post Card
-        <div className="flex flex-col gap-2 bg-white rounded-xl border border-slate-200">
-          <div className="flex flex-row justify-between items-center mt-2 mx-4">
-            {/* Card Header */}
-            <div className="flex flex-row items-center gap-4">
-              <span>Posted by: {post.user.username}</span>
-            </div>
+        <div className="bg-white rounded-xl border border-slate-200 p-5 shadow-sm w-full max-w-xl mx-auto">
+          
+          {/* Card Header */}
+          <div className="flex items-center justify-between mb-3">
+            <span className="text-sm font-semibold text-gray-800">
+              {post.user.username}
+            </span>
             <FiMoreHorizontal 
-              className="w-6 h-6"
+              className="w-6 h-5 text-gray-500 cursor-pointer hover:text-gray-700"
               onClick={() => setEditIsClicked(true)} 
             /> 
+          </div>
+          
 
-            {/* Card Contenet */}
-            <div>
-              <h3>{post.title}</h3>
-              <p>{post.content}</p>
-            </div>
+          {/* Card Contenet */}
+          <div className="bg-[#3d7e9f] text-white rounded-lg p-4 mb-3">
+            <h3 className="text-lg font-semibold mb-1">{post.title}</h3>
+            <p className="text-sm leading-relaxed">{post.content}</p>
+          </div>
             
-
-            <button onClick={() => handleDeleteClick(post.id)}>Delete Post</button>
-
-
+          {/* Card Footer */}
+          <div className="flex justify-between items-center">
+            <div className="flex items-center gap-2" >
+              <GoHeartFill className="text-pink-500 w-5 h-5" /> 
+              <span className="text-sm">
+                {post.likes.length}
+              </span>
+            </div>
+            <button 
+              onClick={() => handleDeleteClick(post.id)}
+              className="text-sm text-red-500 hover:text-red-600 transition"
+            >
+              Delete
+            </button>
           </div>
         </div>
       )}
