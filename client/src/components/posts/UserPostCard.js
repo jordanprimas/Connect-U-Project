@@ -3,6 +3,12 @@ import * as yup from 'yup';
 import { Formik, useFormikContext } from 'formik';
 import { FiMoreHorizontal } from "react-icons/fi";
 import { GoHeartFill } from "react-icons/go";
+import dayjs from "dayjs";
+import relativeTime from "dayjs/plugin/relativeTime";
+import utc from "dayjs/plugin/utc";
+
+dayjs.extend(relativeTime);
+dayjs.extend(utc);
 
 
 
@@ -24,8 +30,8 @@ const UserPostCard = ({ post, handleEditClick, handleDeleteClick }) => {
  
 
   const formSchema = yup.object().shape({
-    title: yup.string().min(1).required('Please enter at least 1 character'),
-    content: yup.string().min(10).required('Please enter at least 10 characters'),
+    title: yup.string().min(1, "Your post needs a title!").required('Title is required'),
+    content: yup.string().min(10, "Post content should be at least 10 characters").required('Post content should be at least 10 characters'),
   })
 
   const handleSubmit = (values) => {
@@ -106,22 +112,28 @@ const UserPostCard = ({ post, handleEditClick, handleDeleteClick }) => {
       ) : (
 
         // Post Card
-        <div className="bg-white rounded-xl border border-slate-200 p-5 shadow-sm w-full max-w-xl mx-auto">
+        <div className="bg-white rounded-xl border border-slate-200 p-5 shadow-sm max-w-xl w-full mx-auto">
           
           {/* Card Header */}
-          <div className="flex items-center justify-between mb-3">
-            <span className="text-sm font-semibold text-gray-800">
-              {post.user.username}
-            </span>
-            <FiMoreHorizontal 
+
+          <div className="flex items-center justify-between mb-4">
+            <div className="w-9 h-9 rounded-full bg-[#86ABBD] text-white flex items-center justify-center font-semibold">
+                {post.user.username[0].toUpperCase()}
+            </div>
+            <div className="flex items-center gap-3 text-sm text-gray-500">
+              <p className="font-semibold text-gray-800">{post.user.username}</p>
+              <span className="w-1 h-1 bg-gray-400 rounded-full inline-block"></span>
+              <span>{dayjs.utc(post.created_at).local().fromNow()}</span>
+            </div>
+
+              <FiMoreHorizontal 
               className="w-6 h-5 text-gray-500 cursor-pointer hover:text-gray-700"
               onClick={() => setEditIsClicked(true)} 
-            /> 
+              /> 
           </div>
           
-
           {/* Card Contenet */}
-          <div className="bg-[#3d7e9f] text-white rounded-lg p-4 mb-3">
+          <div className="bg-[#3d7e9f] space-y-3 text-white rounded-lg p-4 mb-4">
             <h3 className="text-lg font-semibold mb-1">{post.title}</h3>
             <p className="text-sm leading-relaxed">{post.content}</p>
           </div>
@@ -129,7 +141,7 @@ const UserPostCard = ({ post, handleEditClick, handleDeleteClick }) => {
           {/* Card Footer Buttons */}
           <div className="flex justify-between items-center">
             <div className="flex items-center gap-2" >
-              <GoHeartFill className="text-pink-500 w-5 h-5" /> 
+              <GoHeartFill className="text-[#FF7E6B] w-5 h-5" /> 
               <span className="text-sm">
                 {post.likes.length}
               </span>
