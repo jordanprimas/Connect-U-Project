@@ -41,7 +41,7 @@ const NavBar = ({updateUser}) => {
             >
                 
                 {/*Toggle button */}
-                <BsArrowLeftShort className={`bg-white text-[#3d7e9f] text-3xl rounded-full absolute -right-3 top-9 
+                <BsArrowLeftShort className={`bg-white text-[#3498DB] text-3xl rounded-full absolute -right-3 top-9 
                 border border-[#3d7e9f] cursor-pointer ${!open && "rotate-180"}`}
                 onClick={() => setOpen(!open)}
                 />

@@ -2,26 +2,25 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useFormik } from "formik";
 import * as yup from "yup";
+import { FiEye, FiEyeOff } from "react-icons/fi";
 
 function Authentication({ updateUser }) {
-  const [signUp, setSignUp] = useState(false);
+  const [activeTab, setActiveTab] = useState("login");
   const [errorMessage, setErrorMessage] = useState(null);
+  const [showPassword, setShowPassword] = useState(false);
+
   const navigate = useNavigate();
 
-  
-  const handleClick = () => {
-    window.location.href = 'http://localhost:5555/google'
-  }
-
-  const handleSignUpClick = () => {
-    setSignUp((signUp) => !signUp)
-  }
-
-  const formSchema = yup.object().shape({
+  const loginSchema = yup.object().shape({
     username: yup.string().required("Please enter a username"),
     password: yup.string().required("Please enter a password"),
-    email: signUp ? yup.string().email("Invalid email address").required("Please enter an email") : yup.string(),
-  })
+  });
+
+  const signupSchema = yup.object().shape({
+    username: yup.string().required("Please enter a username"),
+    password: yup.string().required("Please enter a password"),
+    email: yup.string().email("Invalid email address").required("Please enter an email"),
+  });
 
   const formik = useFormik({
     initialValues: {
@@ -29,107 +28,128 @@ function Authentication({ updateUser }) {
       password: "",
       email: "",
     },
-    validationSchema: formSchema,
+    validationSchema: activeTab === "signup" ? signupSchema : loginSchema,
     onSubmit: (values) => {
-      fetch(signUp ? "/api/signup" : "/api/login", {
+      fetch(activeTab === "signup" ? "/api/signup" : "/api/login", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(values, null, 2),
+        body: JSON.stringify(values),
       })
         .then((res) => {
           if (res.ok) {
             res.json().then((user) => {
-              updateUser(user)
-              navigate("/")
+              updateUser(user);
+              navigate("/");
             })
           } else {
-            res.json()
-            .then(res => setErrorMessage(res.error))
+            res.json().then(res => setErrorMessage(res.error));
           }
-        })
+        });
     },
-  })
+    validateOnChange: false,
+    validateOnBlur: false,
+  });
+
+  const handleTabSwitch = (tab) => {
+    setActiveTab(tab);
+    setErrorMessage(null);
+    formik.resetForm();
+  }
 
 
   return (
-    <div>
-      {errorMessage && <p style={{ color: "red" }}>{errorMessage}</p>}
-      {formik.errors &&
-        Object.values(formik.errors).map((error, index) => (
-          <p key={index} style={{ color: "red" }}>
-            {error}
-          </p>
-        ))}
-      <h2>Please log in or sign up</h2>
-      <h2>{signUp ? "Already a member?" : "Not a member?"}</h2>
+    <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4">
+      <div className="bg-white rounded-xl shadow-lg max-w-md w-full p-8">
+        <div className="flex justify-center mb-6 border-b border-gray-200">
+          <button
+            onClick={() => handleTabSwitch("login")}
+            className={`px-4 py-2 font-medium ${
+              activeTab === "login" ? "border-b-2 border-[#FF7E6B]" : "text-gray-500"
+            } transition-colors`}
+          >
+            Login
+          </button>
 
-      <button type="button" onClick={handleSignUpClick}>
-          {signUp ? "Log In!" : "Register now!"}
-        </button>
-
-      <button
-        onClick={handleClick}
-        style={{
-          backgroundColor: "#ffffff",
-          border: "1px solid #dcdcdc",
-          borderRadius: "5px",
-          padding: "10px 20px",
-          fontSize: "16px",
-          cursor: "pointer",
-          display: "flex",
-          alignItems: "center",
-        }}
-      >
-        <img
-          src="https://upload.wikimedia.org/wikipedia/commons/thumb/c/c1/Google_%22G%22_logo.svg/768px-Google_%22G%22_logo.svg.png"
-          alt="Google Logo"
-          style={{ marginRight: "10px", width: "20px", height: "20px" }}
-        />
-        Sign in with Google
-      </button>
-      {/* Google button using react router Link */}
-      {/* <Link to="http://localhost:5555/google" className="google-button">
-        Sign In or Log In With Google
-      </Link> */}
-      <form onSubmit={formik.handleSubmit}>
-        <div>
-          <label>Username</label>
-          <input
-            type="text"
-            name="username"
-            value={formik.values.username}
-            onChange={formik.handleChange}
-            placeholder="username"
-          />
-          <label>Password</label>
-          <input
-            type="text"
-            name="password"
-            value={formik.values.password}
-            onChange={formik.handleChange}
-            placeholder="password"
-          />
+          <button
+            onClick={() => handleTabSwitch("signup")}
+            className={`px-4 py-2 font-medium ${
+              activeTab === "signup" ? "border-b-2 border-[#FF7E6B] text-[#FF7E6B]" : "text-gray-500"
+            } transition-colors`}
+          >
+            Sign Up
+          </button>
         </div>
 
-        {signUp && (
+        {errorMessage && <p className="text-red-500 text-sm mb-2">{errorMessage}</p>}
+        {formik.errors &&
+          Object.values(formik.errors).map((error, index) => (
+            <p key={index} className="text-red-500 text-sm mb-2">
+              {error}
+            </p>
+        ))}
+
+        <form onSubmit={formik.handleSubmit} className="space-y-4">
           <div>
-            <label>Email</label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Username</label>
             <input
-              type="email"
-              name="email"
-              value={formik.values.email}
+              type="text"
+              name="username"
+              value={formik.values.username}
               onChange={formik.handleChange}
-              placeholder="email"
+              placeholder="Enter username"
+              className="w-full px-2 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#86ABBD] text-gray-800"
             />
           </div>
-        )}
 
-        <button type="submit">{signUp ? "Sign up" : "Log in"}</button>
-      </form>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Password</label>
+            <div className="relative">
+                <input
+                type={showPassword ? "text" : "password"}
+                name="password"
+                value={formik.values.password}
+                onChange={formik.handleChange}
+                placeholder="Enter password"
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#86ABBD] text-gray-800"
+              />
+
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700"
+              >
+                {showPassword ? <FiEye size={18} /> : <FiEyeOff size={18} />}
+              </button>
+            </div>
+            
+          </div>
+
+          {activeTab === "signup" && (
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
+              <input
+                type="email"
+                name="email"
+                value={formik.values.email}
+                onChange={formik.handleChange}
+                placeholder="Enter email"
+                className="w-full px-2 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#83ABBD] text-gray-800"
+              />
+            </div>
+          )}
+
+          <button 
+            type="submit"
+            className="w-full py-2 rounded-lg bg-[#FF7E6B] text-white font-semibold hover:bg-[#E56253] transition-colors duration-200"
+          >
+            {activeTab === "signup" ? "Sign up" : "Log in"}
+          </button>
+        </form>
+      </div>
     </div>
-  )
+  );
 }
 
 export default Authentication;
