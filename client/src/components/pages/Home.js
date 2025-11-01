@@ -15,7 +15,7 @@ const Home = ({ user, posts, handleEditClick, handleDeleteClick }) => {
         <Link 
           to={`/posts/new`} 
           className="bg-[#FF7E6B] text-white px-4 py-2 rounded-lg 
-          shadow hover:bg-[#E56253] transition-all"
+          shadow-md hover:bg-[#E56253] transition-all duration-200"
         >
           Create Post
         </Link>

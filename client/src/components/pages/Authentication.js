@@ -106,7 +106,7 @@ function Authentication({ updateUser }) {
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">Password</label>
             <div className="relative">
-                <input
+              <input
                 type={showPassword ? "text" : "password"}
                 name="password"
                 value={formik.values.password}
@@ -123,7 +123,6 @@ function Authentication({ updateUser }) {
                 {showPassword ? <FiEye size={18} /> : <FiEyeOff size={18} />}
               </button>
             </div>
-            
           </div>
 
           {activeTab === "signup" && (

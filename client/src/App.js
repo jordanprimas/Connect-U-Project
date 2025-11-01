@@ -118,7 +118,8 @@ const App = () => {
     const filteredLikes = likes.filter(like => like.id !== deletedLike.id)
     setLikes(filteredLikes)
   }
-  
+ 
+ 
 
   if(!user)return(
     <>
@@ -134,7 +135,7 @@ const App = () => {
         <Route path="/posts" element={<PostList posts={posts} likes={likes} handleAddLike={handleAddLike} user={user} handleDeleteLike={handleDeleteLike} />} />
         <Route path="/posts/new" element={<PostForm addPost={addPost} />} />
         <Route path="/Authentication" element={<Authentication updateUser={updateUser} />} />
-        <Route path="/groups" element={<GroupList groups={groups} updateGroup={updateGroup} deleteUserGroup={deleteUserGroup} />} />
+        <Route path="/groups" element={<GroupList groups={groups} updateGroup={updateGroup} deleteUserGroup={deleteUserGroup} user={user} />} />
       </Route>
     </Routes>
   );
