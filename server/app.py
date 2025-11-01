@@ -220,7 +220,7 @@ class PostByID(Resource):
     def patch(self, id):
         post = Post.query.filter_by(id=id).first()
         if not post:
-            abort(404, "The post you are trying to update for could not be found!")
+            abort(404, "The post you are trying to update could not be found!")
 
         data = request.get_json()
         for attr in data:
@@ -258,7 +258,7 @@ class PostByID(Resource):
 
 api.add_resource(PostByID, '/api/posts/<int:id>')
 
-class GroupResource(Resource): 
+class AllGroupResource(Resource): 
     def get(self):
         groups = [group.to_dict() for group in Group.query.all()]
         if not groups:
@@ -293,7 +293,50 @@ class GroupResource(Resource):
         except ValueError as e:
             return {'error': str(e)}, 400
 
-api.add_resource(GroupResource, "/api/groups")  
+api.add_resource(AllGroupResource, "/api/groups")  
+
+class GroupByID(Resource):
+    def get(self, id):
+        group = Group.query.filter_by(id=id).first.to_dict()
+        if not group:
+            abort(404, "The group you are looking for could not be found!")
+        
+        response = make_response(
+            group,
+            200
+        )
+        return response
+
+    def patch():
+        group = Group.query.filter_by(id=id).first.to_dict()
+        if not group:
+            abort(404, "The group you are trying to update could not be found!") 
+        data = request.get_json()
+        for attr in ["name", "description", "cover_image"]:
+            if attr in data:
+                setattr(group, attr, data[attr])
+        db.session.add(group)
+        db.session.commit()
+
+        response_dict = group.to_dict()
+        response = make_response(
+            group,
+            200
+        )
+        return response
+    
+    def delete():
+        group = Group.query.filter_by(id=id).first.to_dict()
+        if not group:
+            abort(404, "The group you are trying to delete could not be found!") 
+
+        db.session.delete()
+        db.session.commit()
+        return {}, 204
+
+api.add_resource(GroupByID, "/api/groups/<int:id>")
+
+
 
 
 class UserGroupResource(Resource):

@@ -14,7 +14,7 @@ import * as yup from "yup"
  */
 
 
-const GroupForm = ({ groupId, updateGroup, userGroups, deleteUserGroup }) => {
+const MessageForm = ({ groupId, updateGroup, userGroups, deleteUserGroup }) => {
   // --- State and Context --- 
   const [errorMessage, setErrorMessage] = useState(null);
   const [joinGroup, setJoinGroup] = useState(false);
@@ -152,4 +152,4 @@ const GroupForm = ({ groupId, updateGroup, userGroups, deleteUserGroup }) => {
   )
 }
 
-export default GroupForm;
+export default MessageForm;

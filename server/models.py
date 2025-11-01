@@ -93,6 +93,8 @@ class Group(db.Model, SerializerMixin):
 
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String, nullable=False, unique=True)
+    description = db.Column(db.String, nullable=True)
+    cover_image = db.Column(db.String, nullable=True)
 
     user_groups = db.relationship('UserGroup', back_populates='group', cascade='all, delete-orphan')
 
