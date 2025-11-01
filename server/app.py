@@ -297,7 +297,7 @@ api.add_resource(AllGroupResource, "/api/groups")
 
 class GroupByID(Resource):
     def get(self, id):
-        group = Group.query.filter_by(id=id).first.to_dict()
+        group = Group.query.filter_by(id=id).first().to_dict()
         if not group:
             abort(404, "The group you are looking for could not be found!")
         
@@ -307,8 +307,8 @@ class GroupByID(Resource):
         )
         return response
 
-    def patch():
-        group = Group.query.filter_by(id=id).first.to_dict()
+    def patch(self, id):
+        group = Group.query.filter_by(id=id).first()
         if not group:
             abort(404, "The group you are trying to update could not be found!") 
         data = request.get_json()
@@ -325,12 +325,12 @@ class GroupByID(Resource):
         )
         return response
     
-    def delete():
-        group = Group.query.filter_by(id=id).first.to_dict()
+    def delete(self, id):
+        group = Group.query.filter_by(id=id).first()
         if not group:
             abort(404, "The group you are trying to delete could not be found!") 
 
-        db.session.delete()
+        db.session.delete(group)
         db.session.commit()
         return {}, 204
 

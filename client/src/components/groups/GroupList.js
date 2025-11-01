@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Link } from "react-router-dom";
 import { ChevronDown, ChevronUp } from "lucide-react"
 import MessageForm from './MessageForm';
 
@@ -109,7 +110,7 @@ const GroupList = ({ groups, updateGroup, deleteUserGroup, currentUser, user }) 
               />
             </div>
 
-            {/* Content */}
+            {/* Group Cards */}
             <div className="p-5 flex flex-col gap-3">
               <div className="flex justify-between items-start">
                 <h2 className="text-xl font-semibold text-[#3D7E9F]">{group.name}</h2>
@@ -121,77 +122,18 @@ const GroupList = ({ groups, updateGroup, deleteUserGroup, currentUser, user }) 
                 </p>
               )}
 
-              <button
-                
-                className="self-start px-4 py-2 rounded-lg bg-[#FF7E6B] text-white font-medium hover:bg-[#E56253] transition duration-200"
+              <Link
+                to={`/groups/${group.id}`}
+                className="px-4 py-2 rounded-lg bg-[#FF7E6B] text-white font-medium hover:bg-[#E56253] transition duration-200"
               >
                 Visit Group
-              </button>
+              </Link>
               
             </div>
-            
-
-            
-            
-
-            {/* Dropdown Toggle
-            <button 
-              onClick={() => toggleGroup(group.id)}
-              className="flex items-center gap-2 text-sm text-[#3D7E9F] font-medium hover:text-[#86ABBD] transition"
-            >
-              {openGroupID === group.id ? (
-                <>
-                  Hide Members <ChevronUp size={16} />
-                </>
-              ) : (
-                <>
-                  View Members <ChevronDown size={16} />
-                </>
-              )}
-            </button>
-
-            Members List
-            {openGroupID === group.id && (
-              <div className="mt-4 bg-gray rounded-lg p-4 border border-gray-200 max-h-60 overflow-y-auto">
-                {group.user_groups && group.user_groups.length > 0 ? (
-                  <ul className="space-y-2">
-                    {group.user_groups.map((userGroup) => (
-                      <li
-                        key={userGroup.id}
-                        className="flex items-start gap-3 bg-white rounded-lg shadow-sm p-3"
-                      >
-                        - Avatar 
-                        <div className="w-8 h-8 rounded-full bg-[#86ABBD] text-white flex items-center justify-center font-semibold">
-                            {userGroup.user.username[0].toUpperCase()}
-                        </div>
-
-                        - Content
-                        <div>
-                          <span className="text-gray-800 font-medium">
-                            {userGroup.user.username}
-                          </span>
-                        
-                          - Optional message
-                          {userGroup.message && (
-                            <p className="text-sm text-gray-600">{userGroup.message}</p>
-                          )}
-                        </div>
-                      </li>
-                    ))}
-                  </ul>
-                ) : (
-                  <p className="text-gray-500 text-sm">No members yet</p>
-                )}
-              </div>
-
-
-            )} */}
-
           </div>
         ))}
 
         </div>
-        {/* Group Cards */}
     </div>
   );
 };

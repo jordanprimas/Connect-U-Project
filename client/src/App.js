@@ -4,10 +4,11 @@ import NavBar from "./components/pages/Navbar";
 import PostList from "./components/posts/PostList";
 import PostForm from "./components/posts/PostForm";
 import Home from "./components/pages/Home";
-import Authentication from "./components/pages/Authentication"
-import GroupList from "./components/groups/GroupList"
+import Authentication from "./components/pages/Authentication";
+import GroupList from "./components/groups/GroupList";
+import GroupDetail from "./components/groups/GroupDetail.js";
 import { GroupContext } from "./contexts/GroupContext";
-import { PostContext } from "./contexts/PostContext"
+import { PostContext } from "./contexts/PostContext";
 import { UserContext } from "./contexts/UserContext";
 import './index.css';
 
@@ -136,6 +137,7 @@ const App = () => {
         <Route path="/posts/new" element={<PostForm addPost={addPost} />} />
         <Route path="/Authentication" element={<Authentication updateUser={updateUser} />} />
         <Route path="/groups" element={<GroupList groups={groups} updateGroup={updateGroup} deleteUserGroup={deleteUserGroup} user={user} />} />
+        <Route path="/groups/:id" element={<GroupDetail />} />
       </Route>
     </Routes>
   );
