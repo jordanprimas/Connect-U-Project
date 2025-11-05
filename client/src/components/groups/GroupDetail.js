@@ -1,39 +1,79 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
+import MessageForm from "./MessageForm";
+import Loading from "../Loading";
 
 
-const GroupDetail = () => {
-    const [openGroupID, setOpenGroupID] = useState(null);
-    const { id } = useParams();
-    const [group, setGroup] = useState(null);
+const GroupDetail = ({ updateGroup, deleteUserGroup }) => {
+  const [openGroupID, setOpenGroupID] = useState(null);
+  const { id } = useParams();
+  const [group, setGroup] = useState(null);
+  const [loading, setLoading] = useState(true)
 
   useEffect(() => {
     fetch(`/api/groups/${id}`)
       .then(res => res.json())
       .then(data => {
-        console.log(data);
         setGroup(data);
-      });
+        setLoading(false);
+      })
+      .catch((err) => {
+        console.error("Error fetching group:", err)
+        setLoading(false);
+      })
   }, [id]);
 
+  if (loading) return (
+    <div className="flex justify-center items-center h-32">
+      <div className="w-10 h-10 border-4 border-gray-300 border-t-blue-500 rounded-full animate-spin"></div>
+    </div>
+  );
 
     const toggleGroup = (id) => {
         setOpenGroupID(openGroupID === id ? null : id)
     }
 
 
-   return (
-    <div>
-      {group ? (
-        <>
-          <h2>{group.name}</h2>
-          <p>Discussion</p>
-        </>
-      ) : (
-        <p>Loading...</p>
-      )}
+  return (
+    <div className="max-w-4xl mx-auto p-6">
+      {/* Cover Image */}
+      <div className="relative h-64 w-full mb-6 rounded-2xl overflow-hidden shadow-lg">
+        {group.cover_image ? (
+          <img
+            src={group.cover_image}
+            alt={`${group.name} Cover`}
+            className="w-full h-full object-cover"
+          />
+        ) : (
+          <div className="w-full h-full bg-gradient-to-br from-[#3D7E9F] to [#86ABBD] flex items-center justify-center text-white text-2xl font-semibold">
+            {group.name.charAt(0).toUpperCase()}
+          </div>
+        )}
+     </div>
+
+      {/* Header -Add back button and join group button */}
+      {/* If group.user_id === current user show edit group button and delete group button */}
+      <div className="flex justify-between items-center mb-4">
+        <h2 className="text-3xl font-bold text-[#3D7E9F]">{group.name}</h2>
+        {/* <MessageForm groupId={group.id} updateGroup={updateGroup} userGroups={group.user_groups} deleteUserGroup={deleteUserGroup}/> */}
+      </div>
+
+       <p className="text-gray-700 mb-8">
+          {group.description}
+       </p>
+
+      {/* Messages Section  */}
+      <p>Discussion</p>
+      {/* If message.user_id == current user edit and delete button for message */}
+
+      {/* Member section */}
+
+
+
+
+     
     </div>
-);
+  );
 };
 
 export default GroupDetail;
@@ -90,3 +130,5 @@ export default GroupDetail;
 
 
             )} */}
+
+  

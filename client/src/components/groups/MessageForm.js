@@ -4,13 +4,8 @@ import { UserContext } from "../../contexts/UserContext"
 import * as yup from "yup"
 
 /**
- * GroupForm Componenet
- * ____________________
- * Handles user memebership in a group (join/leave actions).
- * Includes:
- *   - Form validation using Formik + Yup
- *   - API requests to backend for join/leave actions 
- *   - UI state synchronization (join status, error handling)
+Join/leave group logic
+TAKE OUT MESSAGE VALUES AND MOVE TO GROUPDETAIL OR CREATE JOIN GROUP COMPONENT
  */
 
 
@@ -23,6 +18,7 @@ const MessageForm = ({ groupId, updateGroup, userGroups, deleteUserGroup }) => {
   // Check if the user is already a member 
   const userJoinedGroup = userGroups.find(userGroup => userGroup.user_id === user.id);
   const userGroupId = userJoinedGroup ? userJoinedGroup.id : null;
+  console.log(userGroupId)
 
   // Keep join state synced with current userGroups  
   useEffect(() => {
@@ -80,7 +76,7 @@ const MessageForm = ({ groupId, updateGroup, userGroups, deleteUserGroup }) => {
 
       if (!userGroupId) {
         setErrorMessage("Group not found");
-        return;
+        
       }
 
       fetch(`/api/user_groups/${userGroupId}`, {

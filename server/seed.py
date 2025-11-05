@@ -1,71 +1,84 @@
-#!/usr/bin/env python3
-
-# Standard library imports
-from random import randint, choice as rc
-
-# Remote library imports
+from random import choice, randint
 from faker import Faker
-
-# Local imports
 from app import app
 from models import db, User, Post, Group, UserGroup, Like
 
-if __name__ == '__main__':
-    # Instantiate a Faker instance 
-    fake = Faker()
+fake = Faker()
 
-    # Create application context 
+if __name__ == "__main__":
     with app.app_context():
-        print("Starting seed...")
-        
-        # Delete all rows in each table 
-        Like.query.delete()
-        Post.query.delete()
-        UserGroup.query.delete()
-        Group.query.delete()
-        User.query.delete()
+        print("🌱 Seeding database...")
 
-
-        u1 = User(username = "jordan1234", email = fake.email(), password_hash = "12345")
-        u2 = User(username = "cashew1234", email = fake.email(), password_hash = "23456")
-        u3 = User(username = "arya1234", email = fake.email(), password_hash = "password")
-        u4 = User(username = "username", email = fake.email(), password_hash = "hello world")
-
-        db.session.add_all([u1, u2, u3, u4])
+        # Clear existing data
+        db.session.query(Like).delete()
+        db.session.query(Post).delete()
+        db.session.query(UserGroup).delete()
+        db.session.query(Group).delete()
+        db.session.query(User).delete()
         db.session.commit()
 
-        p1 = Post(title = "title one", content = "This is my first post...", user_id = u1.id)
-        p2 = Post(title = "title two", content = "This is my first post...", user_id = u2.id)
-        p3 = Post(title = "title three", content = "This is my first post...", user_id = u3.id)
-        p4 = Post(title = "title four", content = "This is my first post...", user_id = u4.id)
-
-        db.session.add_all([p1, p2, p3, p4])
+        # --- USERS ---
+        users = []
+        for i in range(20):
+            user = User(
+                username=fake.unique.user_name(),
+                email=fake.unique.email(),
+                password_hash="password123"  # Replace later with hash if using bcrypt
+            )
+            users.append(user)
+        db.session.add_all(users)
         db.session.commit()
+        print(f"✅ Created {len(users)} users")
 
-        g1 = Group(name="Animal Lovers")
-        g2 = Group(name="Travelers Guide")
-        g3 = Group(name="Culinary Connoisseurs")
-
-        db.session.add_all([g1, g2, g3])
+        # --- GROUPS ---
+        groups = []
+        for i in range(100):
+            group = Group(
+                name=f"{fake.unique.word().capitalize()} {fake.word().capitalize()} Club",
+                description=fake.paragraph(nb_sentences=3),
+                cover_image=f"https://picsum.photos/seed/group{i}/600/400"
+            )
+            groups.append(group)
+        db.session.add_all(groups)
         db.session.commit()
+        print(f"✅ Created {len(groups)} groups")
 
-        ug1 = UserGroup(user=u1, group=g1, message="I'm so excited to be joining the group")
-        ug2 = UserGroup(user=u2, group=g3, message="Hello everyone!")
-        ug3 = UserGroup(user=u4, group=g2, message="I just joined!!")
-        ug4 = UserGroup(user=u4, group=g1, message="Hi everyone!")
-
-        db.session.add_all([ug1, ug2, ug3, ug4])
+        # --- POSTS ---
+        posts = []
+        for i in range(50):
+            post = Post(
+                title=" ".join(fake.words(nb=2)).title(),
+                content=fake.paragraph(nb_sentences=4),
+                image=f"https://picsum.photos/seed/post{i}/600/400",
+                user_id=choice(users).id
+            )
+            posts.append(post)
+        db.session.add_all(posts)
         db.session.commit()
+        print(f"✅ Created {len(posts)} posts")
 
-        l1 = Like(user_id=1, post_id=2)
-        l2 = Like(user_id=1, post_id=3)
-        l3 = Like(user_id=2, post_id=1)
-        l4 = Like(user_id=3, post_id=2)
-        l5 = Like(user_id=4, post_id=2)
-
-        db.session.add_all([l1, l2, l3, l4, l5])
+        # --- USER-GROUP RELATIONSHIPS ---
+        user_groups = []
+        for _ in range(60):
+            ug = UserGroup(
+                user_id=choice(users).id,
+                group_id=choice(groups).id
+            )
+            user_groups.append(ug)
+        db.session.add_all(user_groups)
         db.session.commit()
+        print(f"✅ Created {len(user_groups)} user-group relationships")
 
+        # --- LIKES ---
+        likes = []
+        for _ in range(150):
+            like = Like(
+                user_id=choice(users).id,
+                post_id=choice(posts).id
+            )
+            likes.append(like)
+        db.session.add_all(likes)
+        db.session.commit()
+        print(f"✅ Created {len(likes)} likes")
 
-
-
+        print("Seeding complete!")

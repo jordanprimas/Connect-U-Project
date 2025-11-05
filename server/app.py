@@ -9,7 +9,7 @@ from sqlalchemy.exc import IntegrityError
 
 # Local imports
 from config import app, api, db, oauth, secrets, google
-from models import User, Post, UserGroup, Group, Like
+from models import User, Post, UserGroup, Group, Like, Message
 
 
 
@@ -220,7 +220,11 @@ class PostByID(Resource):
     def patch(self, id):
         post = Post.query.filter_by(id=id).first()
         if not post:
-            abort(404, "The post you are trying to update could not be found!")
+            abort(404, "Post not found.")
+
+        user_id = session.get("user_id")
+        if post.user_id != user_id:
+            abort(403, "You can only edit your own posts.")
 
         data = request.get_json()
         for attr in data:
@@ -373,7 +377,6 @@ class UserGroupResource(Resource):
         else:
             try:
                 new_user_group = UserGroup(
-                    message=data.get("message"),
                     user_id=user_id,
                     group_id=group_id
                 )
@@ -381,14 +384,8 @@ class UserGroupResource(Resource):
                 db.session.add(new_user_group)
                 db.session.commit()
 
-                user_group_dict = new_user_group.to_dict()
+                return make_response(new_user_group.to_dict(), 201)
 
-                response = make_response(
-                    user_group_dict,
-                    201
-                )
-
-                return response
             except ValueError as e:
                 return {'error': str(e)}, 400
 
@@ -486,6 +483,75 @@ class LikeByID(Resource):
 
 api.add_resource(LikeByID, '/api/likes/<int:id>')
 
+class MessageResource(Resource):
+    def get(self):
+        parent_type = request.args.get('parent_type')
+        parent_id = request.args.get('parent_id')
+
+        query = Message.query
+        if parent_type and parent_id:
+            query = query.filter_by(parent_type=parent_type, parent_id=parent_id)
+
+        messages = [m.to_dict() for m in query.order_by(Message.created_at.desc()).all()]
+        return make_response(message, 200)
+
+    def post(self):
+        data = request.get_json()
+
+        parent_type = data.get('parent-type')
+        parent_id = data.get('parent_id')
+
+        if parent_type not in ('post', 'group'):
+            abort(400, "Invalid parent_type. Must be 'post' or 'group'.")
+        
+        if not parent_id:
+            abort(400, "Missing parent_id.")
+
+        new_message = Message(
+            content=data.get('content'),
+            user_id=user_id,
+            parent_type=parent_type,
+            parent_id=parent_id
+        )
+
+        db.session.add(new_message)
+        db.session.commit()
+
+        return make_response(new_message.to_dict(), 201)
+
+api.add_resource(MessageResource, "/api/messages")
+
+class MessageById(Resource):
+    def patch(self, id):
+        message = Message.query.filter_by(id=id).first()
+        if not message:
+            abort(404, "Message not found.")
+
+        user_id = session.get("user_id")
+        if message.user_id != user_id:
+            abort(401, "You can only edit your own messages.")
+
+        data = request.get_json()
+        content = data.get("content")
+
+        if not content:
+            abort(400, "Message content cannot be empty.")
+
+        message.content = content 
+        db.session.commit()
+
+        return make_response(message.to_dict(), 200)
+
+    def delete(self, id):
+        message = Message.query.filter_by(id=id).first()
+        if not message:
+            abort(404, "Message not found.")
+
+        db.session.delete(message)
+        db.session.commit()
+        return {"message": "Message deleted"}, 200
+
+api.add_resource(MessageById, "/api/messages/<int:id>")
 
 
 

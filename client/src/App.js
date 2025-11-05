@@ -5,12 +5,13 @@ import PostList from "./components/posts/PostList";
 import PostForm from "./components/posts/PostForm";
 import Home from "./components/pages/Home";
 import Authentication from "./components/pages/Authentication";
-import GroupList from "./components/groups/GroupList";
+import DiscoverGroups from "./components/pages/DiscoverGroups";
 import GroupDetail from "./components/groups/GroupDetail.js";
 import { GroupContext } from "./contexts/GroupContext";
 import { PostContext } from "./contexts/PostContext";
 import { UserContext } from "./contexts/UserContext";
 import './index.css';
+
 
 const App = () => {
   const [user, setUser] = useContext(UserContext)
@@ -119,9 +120,8 @@ const App = () => {
     const filteredLikes = likes.filter(like => like.id !== deletedLike.id)
     setLikes(filteredLikes)
   }
- 
- 
 
+  
   if(!user)return(
     <>
     <Authentication updateUser={updateUser}/>
@@ -136,8 +136,8 @@ const App = () => {
         <Route path="/posts" element={<PostList posts={posts} likes={likes} handleAddLike={handleAddLike} user={user} handleDeleteLike={handleDeleteLike} />} />
         <Route path="/posts/new" element={<PostForm addPost={addPost} />} />
         <Route path="/Authentication" element={<Authentication updateUser={updateUser} />} />
-        <Route path="/groups" element={<GroupList groups={groups} updateGroup={updateGroup} deleteUserGroup={deleteUserGroup} user={user} />} />
-        <Route path="/groups/:id" element={<GroupDetail />} />
+        <Route path="/groups" element={<DiscoverGroups groups={groups} user={user} />} />
+        <Route path="/groups/:id" element={<GroupDetail updateGroup={updateGroup} deleteUserGroup={deleteUserGroup} />} />
       </Route>
     </Routes>
   );
